@@ -10,12 +10,8 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formSchema } from "@/lib/auth-schema";
 
-const formSchema = z.object({
-    name: z.string().min(3).max(50),
-    email: z.string().min(3).max(50),
-    password: z.string().min(3).max(50),
-});
 export default function SignUp() {
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -35,7 +31,7 @@ export default function SignUp() {
     }
     return (
 
-        <Card>
+        <Card className="w-full max-w-md mx-auto">
             <CardHeader>
                 <CardTitle>Sign Up</CardTitle>
                 <CardDescription>Welcome back! Please Sign in to continue</CardDescription>
@@ -65,7 +61,7 @@ export default function SignUp() {
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="john doe" {...field} />
+                                        <Input placeholder="john@mail.com" {...field} />
                                     </FormControl>
 
                                     <FormMessage />
@@ -86,7 +82,7 @@ export default function SignUp() {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">Submit</Button>
+                        <Button className="w-full" type="submit">Submit</Button>
                     </form>
                 </Form>
             </CardContent>

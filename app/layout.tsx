@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 
 
@@ -18,9 +19,11 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={` antialiased`}
+        suppressHydrationWarning={true}
       >
         <Navbar />
         {children}
+        <Toaster />
       </body>
     </html>
   );

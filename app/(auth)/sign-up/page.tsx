@@ -11,8 +11,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formSchema } from "@/lib/auth-schema";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
+    const router = useRouter();
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -24,9 +28,56 @@ export default function SignUp() {
     })
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+
+        const { name, email, password } = values;
+        const { data, error } = await authClient.signUp.email({
+            email,
+            password,
+            name,
+            callbackURL: "/sign-in",
+        }, {
+            onRequest(context) {
+                console.log("Request initiated:", context);
+                toast.loading("Creating your account...", {
+                    id: "signup",
+                    duration: Infinity,
+                });
+            },
+            onResponse(context) {
+                console.log("Response received:", context);
+                toast.dismiss("signup");
+            },
+            onSuccess(context) {
+                console.log("Sign up successful:", context);
+                form.reset();
+                toast.success("Account created! Redirecting to login...", {
+                    duration: 2000,
+                });
+
+                // Add a slight delay before redirecting
+                setTimeout(() => {
+                    router.push("/sign-in");
+                }, 1500);
+            },
+            onError(context) {
+                console.error("Sign up error:", context);
+                toast.error(typeof context === 'string'
+                    ? context
+                    : "Failed to create account. Please try again.", {
+                    duration: 4000,
+                });
+            },
+        });
+
+        // Check for error from response object
+        if (error) {
+            console.error("Error from response:", error);
+            toast.error(error.message || "Something went wrong during signup", {
+                duration: 4000,
+            });
+            return;
+        }
         console.log(values)
     }
     return (

@@ -3,17 +3,17 @@
  * https://jestjs.io/docs/configuration
  */
 
-import type { JestConfigWithTsJest } from 'ts-jest';
-import nextJest from 'next/jest.js';
+import type { JestConfigWithTsJest } from "ts-jest";
+import nextJest from "next/jest.js";
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
-  dir: './',
+  dir: "./",
 });
 
 // Add any custom config to be passed to Jest
 // Omit preset as next/jest handles it.
-const customJestConfig: Omit<JestConfigWithTsJest, 'preset'> = {
+const customJestConfig: Omit<JestConfigWithTsJest, "preset"> = {
   // Automatically clear mock calls, instances, contexts and results before every test
   clearMocks: true,
 
@@ -77,23 +77,14 @@ const customJestConfig: Omit<JestConfigWithTsJest, 'preset'> = {
   // ],
 
   // An array of file extensions your modules use
-  moduleFileExtensions: [
-    "js",
-    "mjs",
-    "cjs",
-    "jsx",
-    "ts",
-    "tsx",
-    "json",
-    "node"
-  ],
+  moduleFileExtensions: ["js", "mjs", "cjs", "jsx", "ts", "tsx", "json", "node"],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   // moduleNameMapper: {},
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
+    "^@/(.*)$": "<rootDir>/$1",
     // Handle CSS imports (optional, but good practice for Next.js projects)
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -176,9 +167,7 @@ const customJestConfig: Omit<JestConfigWithTsJest, 'preset'> = {
   // testRunner: "jest-circus/runner",
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  transformIgnorePatterns: [
-    "<rootDir>/node_modules/"
-  ],
+  transformIgnorePatterns: ["<rootDir>/node_modules/(?!(nanostores|better-auth)/)"],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,

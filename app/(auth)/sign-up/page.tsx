@@ -24,14 +24,17 @@ export default function SignUp() {
             name: "",
             email: "",
             password: "",
+            confirmPassword: "",
         },
     })
 
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        // Password validation is now handled by Zod schema refinement
+        // No need for manual check here
 
         const { name, email, password } = values;
-        const { data, error } = await authClient.signUp.email({
+        await authClient.signUp.email({
             email,
             password,
             name,
@@ -70,15 +73,6 @@ export default function SignUp() {
             },
         });
 
-        // Check for error from response object
-        if (error) {
-            console.error("Error from response:", error);
-            toast.error(error.message || "Something went wrong during signup", {
-                duration: 4000,
-            });
-            return;
-        }
-        console.log(values)
     }
     return (
 
@@ -131,6 +125,21 @@ export default function SignUp() {
 
                                     <FormMessage />
                                 </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="Confirm your password" {...field} />
+                                    </FormControl>
+
+                                    <FormMessage />
+                                </FormItem>
+
                             )}
                         />
                         <Button className="w-full" type="submit">Submit</Button>

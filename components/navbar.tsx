@@ -1,28 +1,42 @@
 import { BookMarked } from "lucide-react";
 import Link from "next/link";
+import { Button, buttonVariants } from "./ui/button";
+import { headers } from "next/headers";
 
+import { auth } from "../lib/auth";
+import { redirect } from "next/navigation";
 export default async function Navbar() {
-    //   const session = await auth.api.getSession({
-    //     headers: await headers()
-    //   });
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-    return (
-        <div className="border-b px-4">
-            <div className="flex items-center justify-between mx-auto max-w-4xl h-16">
-                <Link href='/' className="flex items-center gap-2">
-                    <BookMarked className="h-6 w-6" />
-                    <span className="font-bold">Queue Hub.</span>
-                </Link>
-                <div>
-                    <Link href='/sign-in' className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
-                        Sign In
-                    </Link>
-                    <Link href='/sign-up' className="ml-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
-                        Sign Up
-                    </Link>
-                </div>
-
-            </div>
+  return (
+    <div className="border-b px-4">
+      <div className="flex items-center justify-between mx-auto max-w-4xl h-16">
+        <Link href="/" className="flex items-center gap-2">
+          <BookMarked className="h-6 w-6" />
+          <span className="font-bold">Queue Hub.</span>
+        </Link>
+        <div>
+          {session ? (
+            <form
+              action={async () => {
+                "use server";
+                await auth.api.signOut({
+                  headers: await headers(),
+                });
+                redirect("/");
+              }}
+            >
+              <Button type="submit">Sign Out</Button>
+            </form>
+          ) : (
+            <Link href="/sign-in" className={buttonVariants()}>
+              Sign In
+            </Link>
+          )}
         </div>
-    )
+      </div>
+    </div>
+  );
 }

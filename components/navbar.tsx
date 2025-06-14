@@ -5,6 +5,8 @@ import { headers } from "next/headers";
 
 import { auth } from "../lib/auth";
 import { redirect } from "next/navigation";
+import ThemeToggleButton from "./theme-toggle-button";
+
 export default async function Navbar() {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -17,7 +19,8 @@ export default async function Navbar() {
           <BookMarked className="h-6 w-6" />
           <span className="font-bold">Queue Hub.</span>
         </Link>
-        <div>
+        <div className="flex items-center gap-2">
+          <ThemeToggleButton />
           {session ? (
             <form
               action={async () => {

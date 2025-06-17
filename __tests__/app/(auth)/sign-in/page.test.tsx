@@ -38,7 +38,7 @@ describe("SignInPage", () => {
     fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
     await waitFor(() => {
       expect(screen.getByText(/please enter valid email address/i)).toBeInTheDocument();
-      expect(screen.getByText(/password must be atleast 5 characters long/i)).toBeInTheDocument();
+      expect(screen.getByText(/Password must be at least 8 characters long/i)).toBeInTheDocument();
     });
   });
 

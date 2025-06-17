@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Your smart, self-hosted watchlist and movie info hub.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

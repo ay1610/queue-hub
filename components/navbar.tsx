@@ -1,16 +1,49 @@
+"use client";
 import { BookMarked } from "lucide-react";
 import Link from "next/link";
-import { headers } from "next/headers";
-
-import { auth } from "../lib/auth";
+import { useEffect, useState } from "react";
+import { authClient } from "../lib/auth-client";
 import { redirect } from "next/navigation";
-import ThemeToggleButton from "./theme-toggle-button";
+import { ThemeToggleButton } from "./theme-toggle-button";
 import { ProfilePopover } from "./profile-drawer";
 
-export default async function Navbar() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+interface User {
+  name?: string;
+  email?: string;
+  image?: string | null;
+  id?: string;
+  emailVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export default function Navbar() {
+  const [session, setSession] = useState<{ session: unknown; user: User } | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const s = await authClient.getSession();
+      if (s && typeof s === "object" && "data" in s && s.data) {
+        const { user, session: sessionData } = s.data;
+        setSession({
+          session: sessionData,
+          user: {
+            ...user,
+            createdAt: user.createdAt ? user.createdAt.toString() : undefined,
+            updatedAt: user.updatedAt ? user.updatedAt.toString() : undefined,
+          },
+        });
+      } else {
+        setSession(null);
+      }
+    })();
+  }, []);
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    setSession(null); // Immediately clear session on sign out
+    redirect("/");
+  };
 
   return (
     <div className="border-b px-4">
@@ -21,20 +54,14 @@ export default async function Navbar() {
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggleButton />
-          {session ? (
+          {session && session.user ? (
             <ProfilePopover
               user={{
-                name: session.user?.name || "User",
-                email: session.user?.email || "",
-                image: session.user?.image || undefined,
+                name: session.user.name || "User",
+                email: session.user.email || "",
+                image: session.user.image || undefined,
               }}
-              onSignOut={async () => {
-                "use server";
-                await auth.api.signOut({
-                  headers: await headers(),
-                });
-                redirect("/");
-              }}
+              onSignOut={handleSignOut}
             />
           ) : (
             <Link

@@ -10,17 +10,20 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    ignores: ["lib/generated/prisma/**", "coverage/**", "**/*.d.ts"],
+  },
   //...compat.extends("next/core-web-vitals", "next/typescript","prettier"),
   ...compat.config({
-    extends:["next/core-web-vitals", "next/typescript","prettier"],
-    rules:{
+    extends: ["next/core-web-vitals", "next/typescript", "prettier"],
+    rules: {
       semi: ["error", "always"],
       quotes: ["error", "double"],
       "prefer-const": "error",
       "prefer-arrow-callback": "error",
       "prefer-template": "error",
-    }
-  })
+    },
+  }),
 ];
 
 export default eslintConfig;

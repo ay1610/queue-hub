@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -19,7 +20,13 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
       {...props}
     >
       {src ? (
-        <img src={src} alt={alt} className="object-cover w-full h-full" />
+        <Image
+          src={src}
+          alt={alt || "Avatar"}
+          className="object-cover"
+          fill
+          // 'sizes' is not needed when using 'fill', as layout is determined by parent
+        />
       ) : fallback ? (
         fallback
       ) : (

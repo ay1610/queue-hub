@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { signInFormSchema } from "@/lib/auth-schema";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function SignIn() {
   // 1. Define your form.
@@ -64,12 +65,28 @@ export default function SignIn() {
         },
         onError(context) {
           console.error("Sign in error:", context);
-          toast.error(
-            typeof context === "string" ? context : "Failed to sign in. Please try again.",
-            {
-              duration: 4000,
-            }
-          );
+          let message = "Failed to sign in. Please try again.";
+          if (typeof context === "string") {
+            message = context;
+          } else if (
+            context &&
+            typeof context === "object" &&
+            "error" in context &&
+            typeof context.error === "string"
+          ) {
+            message = context.error;
+          } else if (
+            context &&
+            typeof context === "object" &&
+            "error" in context &&
+            context.error &&
+            typeof context.error.message === "string"
+          ) {
+            message = context.error.message;
+          }
+          toast.error(message, {
+            duration: 4000,
+          });
         },
       }
     );
@@ -83,7 +100,7 @@ export default function SignIn() {
   }
   return (
     <>
-      <Card className="w-full max-w-md mx-auto">
+      <Card className={cn("w-full max-w-md mx-auto")}>
         <CardHeader>
           <h1 className="font-semibold" data-slot="card-title">
             Sign In
@@ -127,10 +144,10 @@ export default function SignIn() {
             </form>
           </Form>
         </CardContent>
-        <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
+        <CardFooter className={cn("flex justify-center")}>
+          <p className={cn("text-sm text-muted-foreground")}>
             Don&apos;t have an account yet?{" "}
-            <Link href="/sign-up" className="text-primary hover:underline">
+            <Link href="/sign-up" className={cn("text-primary hover:underline")}>
               Sign up
             </Link>
           </p>

@@ -28,6 +28,7 @@ import { formSchema } from "@/lib/auth-schema";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function SignUp() {
   const router = useRouter();
@@ -99,7 +100,7 @@ export default function SignUp() {
     }
   }
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className={cn("w-full max-w-md mx-auto")}>
       <CardHeader>
         <CardTitle>Sign Up</CardTitle>
         <CardDescription>Welcome back! Please Sign in to continue</CardDescription>
@@ -169,10 +170,10 @@ export default function SignUp() {
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex justify-center">
-        <p className="text-sm text-muted-foreground">
+      <CardFooter className={cn("flex justify-center")}>
+        <p className={cn("text-sm text-muted-foreground")}>
           Already have an account?{" "}
-          <Link href="/sign-in" className="text-primary hover:underline">
+          <Link href="/sign-in" className={cn("text-primary hover:underline")}>
             Sign in
           </Link>
         </p>

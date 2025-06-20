@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { z } from "zod";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -30,7 +30,19 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export default function SignUp() {
+interface SignUpProps {
+  /**
+   * Delay in milliseconds before redirecting after successful sign up. Defaults to 1500ms.
+   * Set to 0 for instant redirect (useful for tests).
+   */
+  readonly redirectDelayMs?: number;
+}
+
+export function SignUp({ redirectDelayMs = 1500 }: SignUpProps) {
+  useEffect(() => {
+    return () => {};
+  }, []);
+
   const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,9 +57,6 @@ export default function SignUp() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Password validation is now handled by Zod schema refinement
-    // No need for manual check here
-
     const { name, email, password } = values;
     const { error } = await authClient.signUp.email(
       {
@@ -57,49 +66,41 @@ export default function SignUp() {
         callbackURL: "/sign-in",
       },
       {
-        onRequest(context) {
-          console.log("Request initiated:", context);
+        onRequest() {
           toast.loading("Creating your account...", {
             id: "signup",
             duration: Infinity,
           });
         },
-        onResponse(context) {
-          console.log("Response received:", context);
+        onResponse() {
           toast.dismiss("signup");
         },
-        onSuccess(context) {
-          console.log("Sign up successful:", context);
+        onSuccess() {
           form.reset();
           toast.success("Account created! Redirecting to login...", {
             duration: 2000,
           });
-
-          // Add a slight delay before redirecting
           setTimeout(() => {
             router.push("/sign-in");
-          }, 1500);
+          }, redirectDelayMs);
         },
         onError(context) {
-          console.error("Sign up error:", context);
           toast.error(
             typeof context === "string" ? context : "Failed to create account. Please try again.",
-            {
-              duration: 4000,
-            }
+            { duration: 4000 }
           );
         },
       }
     );
-
-    // Handle error returned from the promise (not via onError handler)
     if (error) {
-      toast.error(error.message || "Something went wrong during signup", {
-        duration: 4000,
-      });
+      toast.error(
+        typeof error.message === "string" ? error.message : "Something went wrong during signup",
+        { duration: 4000 }
+      );
     }
   }
-  return (
+  // Debug: log what is being rendered
+  const renderOutput = (
     <Card className={cn("w-full max-w-md mx-auto")}>
       <CardHeader>
         <CardTitle>Sign Up</CardTitle>
@@ -180,4 +181,6 @@ export default function SignUp() {
       </CardFooter>
     </Card>
   );
+
+  return renderOutput;
 }

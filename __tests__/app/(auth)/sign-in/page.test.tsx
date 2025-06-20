@@ -1,28 +1,30 @@
+import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SignInPage from "@/app/(auth)/sign-in/page";
+import { vi } from "vitest";
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
-jest.mock("next/navigation", () => ({ useRouter: jest.fn() }));
-jest.mock("sonner", () => ({
-  toast: { loading: jest.fn(), dismiss: jest.fn(), success: jest.fn(), error: jest.fn() },
+vi.mock("next/navigation", () => ({ useRouter: vi.fn() }));
+vi.mock("sonner", () => ({
+  toast: { loading: vi.fn(), dismiss: vi.fn(), success: vi.fn(), error: vi.fn() },
 }));
-jest.mock("@/lib/auth-client", () => ({
+vi.mock("@/lib/auth-client", () => ({
   authClient: {
     signIn: {
-      email: jest.fn(),
+      email: vi.fn(),
     },
   },
 }));
 
 describe("SignInPage", () => {
-  const push = jest.fn();
+  const push = vi.fn();
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useRouter as jest.Mock).mockReturnValue({ push });
+    vi.clearAllMocks();
+    (useRouter as unknown as jest.Mock).mockReturnValue({ push });
   });
 
   it("renders the sign-in form", () => {

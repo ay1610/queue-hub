@@ -45,19 +45,16 @@ export default function SignIn() {
         callbackURL: "/",
       },
       {
-        onRequest(context) {
-          console.log("Request initiated:", context);
-          toast.loading("Signing in...", {
+        onRequest() {
+          toast.loading("Signing you in...", {
             id: "signin",
             duration: Infinity,
           });
         },
-        onResponse(context) {
-          console.log("Response received:", context);
+        onResponse() {
           toast.dismiss("signin");
         },
-        onSuccess(context) {
-          console.log("Sign in successful:", context);
+        onSuccess() {
           form.reset();
           toast.success("Signed in! Redirecting...", {
             duration: 2000,

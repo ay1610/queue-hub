@@ -113,7 +113,7 @@ describe("SignInPage", () => {
     fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(
-        "Something went wrong during signup",
+        "Failed to sign in. Please try again.",
         expect.any(Object)
       );
     });

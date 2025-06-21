@@ -30,15 +30,9 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-interface SignUpProps {
-  /**
-   * Delay in milliseconds before redirecting after successful sign up. Defaults to 1500ms.
-   * Set to 0 for instant redirect (useful for tests).
-   */
-  readonly redirectDelayMs?: number;
-}
+function Page() {
+  const redirectDelayMs = 1500;
 
-export function SignUp({ redirectDelayMs = 1500 }: SignUpProps) {
   useEffect(() => {
     return () => {};
   }, []);
@@ -184,3 +178,5 @@ export function SignUp({ redirectDelayMs = 1500 }: SignUpProps) {
 
   return renderOutput;
 }
+
+export default Page;

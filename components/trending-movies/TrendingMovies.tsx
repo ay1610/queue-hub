@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 import { cn } from "@/lib/utils";
 import { TrendingMovieCard } from "./TrendingMovieCard";
 import { getTrendingMovies } from "@/lib/tmdb/movie/client";

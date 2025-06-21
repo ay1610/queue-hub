@@ -15,7 +15,7 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import Navbar from "../navbar";
 import { ThemeProvider } from "next-themes";
 import userEvent from "@testing-library/user-event";

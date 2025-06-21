@@ -46,7 +46,7 @@ export default function SignIn() {
       },
       {
         onRequest() {
-          toast.loading("Signing you in...", {
+          toast.loading("Signing in...", {
             id: "signin",
             duration: Infinity,
           });
@@ -90,7 +90,7 @@ export default function SignIn() {
 
     // Handle error returned from the promise (not via onError handler)
     if (error) {
-      toast.error(error.message || "Something went wrong during signup", {
+      toast.error(error.message || "Failed to sign in. Please try again.", {
         duration: 4000,
       });
     }

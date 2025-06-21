@@ -13,6 +13,11 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     coverage: {
       reporter: ["text", "html"],
+      exclude: [
+        "components/ui/**", // Ignore all files in components/ui/
+        "lib/generated/**", // Ignore generated files
+        ".next/**", // Ignore Next.js build output
+      ],
     },
     include: [
       "components/**/*.test.{ts,tsx}",

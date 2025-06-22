@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 /**
  * Props for the MediaRatingBadge component.
@@ -45,18 +46,24 @@ export function MediaRatingBadge({ voteAverage, label, size = "md" }: MediaRatin
   const { sizeClasses, paddingClasses } = sizeMap[size] || sizeMap.md;
 
   return (
-    <span
-      className={cn(
-        "flex items-center justify-center rounded-full font-bold shadow-lg border-4 border-white",
-        ratingColor,
-        textColor,
-        sizeClasses,
-        paddingClasses
-      )}
-      title={label || "Audience Score"}
-      aria-label={label || "Audience Score"}
-    >
-      {rating.toFixed(1)}
-    </span>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={cn(
+            "flex items-center justify-center rounded-full font-bold shadow-lg border-4 border-white",
+            ratingColor,
+            textColor,
+            sizeClasses,
+            paddingClasses
+          )}
+          aria-label={`${label || "Audience Score"}: ${rating.toFixed(1)}`}
+        >
+          {rating.toFixed(1)}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>
+        {`${label || "Audience Score"}: ${rating.toFixed(1)}`}
+      </TooltipContent>
+    </Tooltip>
   );
 }

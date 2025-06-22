@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import type { TMDBMovie } from "@/lib/tmdb/types";
 import Image from "next/image";
@@ -9,14 +11,15 @@ import { getBackdropUrl } from "@/lib/tmdb/utils";
  */
 export function MovieHero({ movie }: { movie: TMDBMovie }) {
   if (!movie) return null;
+  const backdropUrl = getBackdropUrl(movie.backdrop_path, "w1280");
   return (
     <section
       className="relative w-full min-h-[60vh] h-[60vw] max-h-[700px] flex items-end overflow-hidden bg-black px-8 md:px-16 lg:px-24 py-8 md:py-16 lg:py-24"
       aria-label={`Hero section for ${movie.title}`}
     >
-      {movie.backdrop_path && (
+      {backdropUrl && (
         <Image
-          src={getBackdropUrl(movie.backdrop_path, "w1280")}
+          src={backdropUrl}
           alt={`Backdrop for ${movie.title}`}
           fill
           className="object-cover object-center w-full h-full absolute inset-0 z-0 rounded-lg"

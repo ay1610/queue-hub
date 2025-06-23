@@ -7,51 +7,23 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up SSH (with debug)
+      - name: Install dependencies
         run: |
-          set -x
-          mkdir -p ~/.ssh
-          echo "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ls -l ~/.ssh
-          cat ~/.ssh/id_ed25519 | head -5
-          echo "Host: ${{ secrets.PI_HOST }}"
-          ssh-keyscan -H ${{ secrets.PI_HOST }} >> ~/.ssh/known_hosts
-        env:
-          PI_SSH_KEY: ${{ secrets.PI_SSH_KEY }}
-          PI_HOST: ${{ secrets.PI_HOST }}
+          pnpm install
 
-      - name: Test SSH Connection
+      - name: Build app
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }} 'echo SSH connection successful.'
-        env:
-          PI_USER: ${{ secrets.PI_USER }}
-          PI_HOST: ${{ secrets.PI_HOST }}
+          pnpm build
 
-      - name: Deploy to Raspberry Pi
+      - name: Restart app with PM2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }} << 'EOF'
-            set -e
-            cd /home/pi/nextjs-app
-            git pull origin main
-            if ! command -v pnpm &> /dev/null; then
-              echo "pnpm not found, installing..."
-              npm install -g pnpm
-            fi
-            if ! command -v pm2 &> /dev/null; then
-              echo "pm2 not found, installing..."
-              npm install -g pm2
-            fi
-            pnpm install
-            pnpm build
-            pm2 restart my-next-app || pm2 start npm --name my-next-app -- run start
-          EOF
-        env:
-          PI_USER: ${{ secrets.PI_USER }}
-          PI_HOST: ${{ secrets.PI_HOST }}
+          if ! command -v pm2 &> /dev/null; then
+            npm install -g pm2
+          fi
+          pm2 restart my-next-app || pm2 start npm --name my-next-app -- run start

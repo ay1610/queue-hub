@@ -61,9 +61,7 @@ export function MediaRatingBadge({ voteAverage, label, size = "md" }: MediaRatin
           {rating.toFixed(1)}
         </span>
       </TooltipTrigger>
-      <TooltipContent>
-        {`${label || "Audience Score"}: ${rating.toFixed(1)}`}
-      </TooltipContent>
+      <TooltipContent>{`${label || "Audience Score"}: ${rating.toFixed(1)}`}</TooltipContent>
     </Tooltip>
   );
 }

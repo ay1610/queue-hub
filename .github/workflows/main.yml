@@ -1,4 +1,4 @@
-name: Deploy to Raspberry Pi
+name: Deploy queue-hub to pi
 
 on:
   push:
@@ -26,4 +26,4 @@ jobs:
           if ! command -v pm2 &> /dev/null; then
             npm install -g pm2
           fi
-          pm2 restart my-next-app || pm2 start npm --name my-next-app -- run start
+          pm2 restart queue-hub || pm2 start npm --name queue-hub -- run start

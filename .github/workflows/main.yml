@@ -20,6 +20,10 @@ jobs:
         run: |
           pnpm install
 
+      - name: Generate Prisma client
+        run: |
+          pnpm exec prisma generate
+
       - name: Build app
         run: |
           pnpm build

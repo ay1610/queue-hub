@@ -29,5 +29,5 @@ jobs:
             git pull origin main
             pnpm install
             pnpm build
-            pm2 restart queue-hub
+            pm2 restart my-next-app
           EOF

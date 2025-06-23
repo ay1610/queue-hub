@@ -20,3 +20,14 @@ jobs:
           ${{ secrets.PI_SSH_KEY }}
           EOF
           chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.PI_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to Raspberry Pi
+        run: |
+          ssh ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }} << 'EOF'
+            cd /home/pi/nextjs-app
+            git pull origin main
+            pnpm install
+            pnpm build
+            pm2 restart queue-hub
+          EOF

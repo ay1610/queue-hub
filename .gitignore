@@ -23,7 +23,7 @@
 # misc
 .DS_Store
 *.pem
-.github/
+# .github/   <-- Commented out to allow workflow files
 
 # debug
 npm-debug.log*

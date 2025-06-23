@@ -61,7 +61,7 @@ function Page() {
           });
         },
         onError(context) {
-          console.error("Sign in error:", context);
+          console.error("Sign in error: ", context);
           let message = "Failed to sign in. Please try again.";
           if (typeof context === "string") {
             message = context;

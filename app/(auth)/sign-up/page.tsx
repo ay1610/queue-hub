@@ -184,3 +184,5 @@ export function SignUp({ redirectDelayMs = 1500 }: SignUpProps) {
 
   return renderOutput;
 }
+
+export default SignUp;

@@ -16,19 +16,7 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "$PI_SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H "$PI_HOST" >> ~/.ssh/known_hosts
-        env:
-          PI_SSH_KEY: ${{ secrets.PI_SSH_KEY }}
-          PI_HOST: ${{ secrets.PI_HOST }}
-
-      - name: Deploy to Raspberry Pi
-        run: |
-          ssh ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }} << 'EOF'
-            cd /home/pi/nextjs-app
-            git pull origin main
-            pnpm install
-            pnpm build
-            pm2 restart my-next-app
+          cat << 'EOF' > ~/.ssh/id_ed25519
+          ${{ secrets.PI_SSH_KEY }}
           EOF
+          chmod 600 ~/.ssh/id_ed25519

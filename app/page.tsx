@@ -6,10 +6,12 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function IndexPage() {
+async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (session) {
     redirect("/home");
   }
   redirect("/sign-in");
 }
+
+export default Page;

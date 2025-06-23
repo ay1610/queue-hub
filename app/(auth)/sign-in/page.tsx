@@ -22,7 +22,7 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-export default function SignIn() {
+function Page() {
   // 1. Define your form.
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
@@ -153,3 +153,5 @@ export default function SignIn() {
     </>
   );
 }
+
+export default Page;

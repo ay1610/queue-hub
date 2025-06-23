@@ -12,6 +12,7 @@ import type {
   TMDBImageSize,
   TMDBBackdropSize,
   TMDBAPIError,
+  TMDBConfiguration,
 } from "./types";
 
 class TMDBClient {
@@ -183,6 +184,11 @@ class TMDBClient {
   // Person endpoints
   async getPerson(id: number): Promise<TMDBPerson> {
     return this.fetchAPI(`/person/${id}`);
+  }
+
+  // Configuration endpoint
+  async getConfiguration(): Promise<TMDBConfiguration> {
+    return this.fetchAPI("/configuration");
   }
 }
 

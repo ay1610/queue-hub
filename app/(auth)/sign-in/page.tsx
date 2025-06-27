@@ -34,9 +34,6 @@ function Page() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signInFormSchema>) {
-    // Password validation is now handled by Zod schema refinement
-    // No need for manual check here
-
     const { email, password } = values;
     const { error } = await authClient.signIn.email(
       {
@@ -61,7 +58,6 @@ function Page() {
           });
         },
         onError(context) {
-          console.error("Sign in error: ", context);
           let message = "Failed to sign in. Please try again.";
           if (typeof context === "string") {
             message = context;

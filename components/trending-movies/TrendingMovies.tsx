@@ -22,10 +22,10 @@ export async function TrendingMovies(): Promise<JSX.Element | null> {
   return (
     <>
       <MovieHero movie={heroMovie} />
-      <section className={cn("w-full mt-8")} aria-label="Trending Movies Section">
-        <h2 className={cn("text-2xl font-bold mb-4")}>Trending Movies</h2>
+      <section className={cn("w-[85vw] mt-8 mx-auto")} aria-label="Trending Movies Section">
+        <h2 className={cn("text-2xl font-bold mb-4 text-center")}>Trending Movies</h2>
         <div
-          className={cn("grid grid-cols-2 md:grid-cols-4 gap-4")}
+          className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 justify-center")}
           aria-label="Trending Movies Grid"
         >
           {data.results.map((movie) => (

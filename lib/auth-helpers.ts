@@ -11,6 +11,7 @@ import type { User } from "@/lib/generated/prisma/client";
  */
 export async function getProtectedUser(): Promise<User> {
   const session = await auth.api.getSession({ headers: await headers() });
+  console.log("Session", session);
   if (!session) {
     redirect("/sign-in");
   }

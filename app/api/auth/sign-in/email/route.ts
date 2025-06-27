@@ -19,12 +19,5 @@ export async function OPTIONS() {
 const handler = toNextJsHandler(auth);
 
 export const POST = async (req: Request) => {
-  const response = await handler.POST(req);
-  const data = await response.json();
-  return NextResponse.json(data, {
-    status: response.status,
-    headers: {
-      "Access-Control-Allow-Origin": "http://192.168.4.200",
-    },
-  });
+  return handler.POST(req);
 };

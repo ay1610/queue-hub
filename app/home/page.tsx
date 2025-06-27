@@ -2,7 +2,7 @@ import { getProtectedUser } from "@/lib/auth-helpers";
 import { TrendingMovies } from "@/components/trending-movies";
 import { Banner } from "@/components/ui/banner";
 
-async function Page() {
+export default async function Page() {
   const user = await getProtectedUser();
   return (
     <>
@@ -11,5 +11,3 @@ async function Page() {
     </>
   );
 }
-
-export default Page;

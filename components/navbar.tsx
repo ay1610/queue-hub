@@ -46,13 +46,26 @@ export default function Navbar() {
     redirect("/");
   };
 
+  // The navbar uses a solid background and high z-index to ensure the global GridBg does not show through.
+  // This preserves visual separation and clarity per design requirements.
   return (
-    <div className="border-b px-4">
+    <div className="border-b px-4 bg-background z-30 relative">
       <div className="flex items-center justify-between mx-auto max-w-4xl h-16">
-        <Link href="/" className="flex items-center gap-2">
-          <BookMarked className="h-6 w-6" />
-          <span className="font-bold">Queue Hub.</span>
-        </Link>
+        <div className="flex items-center gap-2 flex-1">
+          <Link href="/" className="flex items-center gap-2">
+            <BookMarked className="h-6 w-6" />
+            <span className="font-bold">Queue Hub.</span>
+          </Link>
+          <Link href="/trending/movies" className="font-medium ml-4">
+            Trending Movies
+          </Link>
+          <Link href="/trending/tv" className="font-medium ml-2">
+            Trending TV
+          </Link>
+          <Link href="/test" className="font-medium ml-4">
+            Test
+          </Link>
+        </div>
         <div className="flex items-center gap-2">
           <ThemeToggleButton />
           {session && session.user ? (

@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
+import { GridBg } from "@/components/GridBg";
 
 export const metadata: Metadata = {
   title: "Queue Hub",
@@ -16,10 +17,11 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="relative min-h-screen">
         <Providers>
           <Navbar />
-          {children}
+          <GridBg />
+          <div className="relative z-10">{children}</div>
           <Toaster />
         </Providers>
       </body>

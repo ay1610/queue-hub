@@ -19,14 +19,14 @@ interface MediaCardProps {
     first_air_date?: string; // For TV shows
     release_date?: string; // For movies
   };
-  type: "movie" | "tv"; // Specifies whether the media is a movie or TV show
+  type: "movie" | "tv" | "person"; // Specifies whether the media is a movie or TV show or person
 }
 
 /**
  * MediaCard displays a single media item (movie or TV show) with its poster and details.
  * Links to the media detail page.
  * @param media - The media object containing details.
- * @param type - The type of media ("movie" or "tv").
+ * @param type - The type of media ("movie" or "tv"). It also includes person
  */
 export function MediaCard({ media, type }: MediaCardProps) {
   const mediaTitle = media.title || media.name;
@@ -46,9 +46,9 @@ export function MediaCard({ media, type }: MediaCardProps) {
           <Image
             src={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
             alt={`Poster for ${mediaTitle}`}
-            width={300} // Updated width for sharper images
-            height={450} // Updated height for sharper images
-            className={cn("rounded mb-2 w-full h-auto")}
+            width={500} // Maintains sharpness
+            height={750} // 2:3 aspect ratio (500 * 3 / 2)
+            className={cn("rounded mb-2 w-full h-auto aspect-[2/3]")}
           />
         ) : (
           <div

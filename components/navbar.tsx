@@ -7,6 +7,7 @@ import { authClient } from "../lib/auth-client";
 import { redirect } from "next/navigation";
 import { ThemeToggleButton } from "./theme-toggle-button";
 import { ProfilePopover } from "./profile-drawer";
+import { SearchBar } from "@/components/search/SearchBar";
 
 interface User {
   name?: string;
@@ -68,6 +69,7 @@ export default function Navbar() {
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggleButton />
+          <SearchBar />
           {session && session.user ? (
             <ProfilePopover
               user={{

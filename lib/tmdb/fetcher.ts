@@ -9,11 +9,17 @@
  * @throws If the API key is missing or the response is not OK.
  */
 export async function tmdbFetcher<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  // Only use server-side environment variable for the API key
-  const apiKey = process.env.TMDB_API_KEY;
+  // Use server-side or client-side environment variable for the API key
+  const apiKey =
+    typeof window === "undefined" ? process.env.TMDB_API_KEY : process.env.NEXT_PUBLIC_TMDB_API_KEY;
   const baseUrl = process.env.TMDB_URL || "https://api.themoviedb.org/3";
-  if (!apiKey)
-    throw new Error("TMDB API key is missing. Ensure TMDB_API_KEY is set on the server.");
+
+  if (!apiKey) {
+    throw new Error(
+      "TMDB API key is missing. Ensure TMDB_API_KEY or NEXT_PUBLIC_TMDB_API_KEY is set."
+    );
+  }
+
   const res = await fetch(`${baseUrl}${endpoint}`, {
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -22,9 +28,11 @@ export async function tmdbFetcher<T>(endpoint: string, options?: RequestInit): P
     },
     ...options,
   });
+
   if (!res.ok) {
     const error = await res.text();
     throw new Error(error || "Failed to fetch from TMDB");
   }
+
   return res.json();
 }

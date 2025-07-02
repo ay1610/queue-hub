@@ -1,7 +1,7 @@
 import React from "react";
 import type { JSX } from "react";
 import { cn } from "@/lib/utils";
-import { TrendingMovieCard } from "./TrendingMovieCard";
+import { MediaCard } from "@/components/media-card/MediaCard";
 import { getTrendingMovies } from "@/lib/tmdb/movie/client";
 import { MovieHero } from "./MovieHero";
 
@@ -29,7 +29,7 @@ export async function TrendingMovies(): Promise<JSX.Element | null> {
           aria-label="Trending Movies Grid"
         >
           {data.results.map((movie) => (
-            <TrendingMovieCard key={movie.id} movie={movie} />
+            <MediaCard key={movie.id} media={movie} type="movie" />
           ))}
         </div>
       </section>

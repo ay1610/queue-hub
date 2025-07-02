@@ -3,7 +3,7 @@ import type { JSX } from "react";
 import { cn } from "@/lib/utils";
 import { getTrendingTVShows } from "@/lib/tmdb/tv/client";
 import { TVShowHero } from "./TVShowHero";
-import { TrendingTVShowCard } from "./TrendingTVShowCard";
+import { MediaCard } from "@/components/media-card/MediaCard";
 
 /**
  * Fetches trending TV shows and displays a hero section for a random show,
@@ -29,7 +29,7 @@ export async function TrendingTVShows(): Promise<JSX.Element | null> {
           aria-label="Trending TV Shows Grid"
         >
           {data.results.map((show) => (
-            <TrendingTVShowCard key={show.id} show={show} />
+            <MediaCard key={show.id} media={show} type="tv" />
           ))}
         </div>
       </section>

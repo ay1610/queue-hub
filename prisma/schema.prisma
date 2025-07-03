@@ -71,3 +71,14 @@ model Verification {
 
   @@map("verification")
 }
+
+
+model WatchLater {
+  id         Int      @id @default(autoincrement())
+  userId     String  
+  mediaId    Int    
+  mediaType  String  
+  addedAt    DateTime @default(now())
+
+  @@unique([userId, mediaId, mediaType])
+}

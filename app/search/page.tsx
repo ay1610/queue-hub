@@ -14,6 +14,7 @@ export default function SearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? "";
   const { data, error, isLoading } = useMediaSearch(query);
+  const totalResults = data?.total_results || 0;
 
   if (isLoading) {
     return (
@@ -41,6 +42,7 @@ export default function SearchPage() {
     <div className="container mx-auto px-4 py-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Search Results for &ldquo;{query}&rdquo;</h1>
+        <p className="text-sm text-muted-foreground">Found {totalResults} results</p>
       </div>
 
       {data?.results?.length ? (

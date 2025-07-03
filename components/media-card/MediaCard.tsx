@@ -31,7 +31,7 @@ interface MediaCardProps {
 export function MediaCard({ media, type }: MediaCardProps) {
   const mediaTitle = media.title || media.name;
   const mediaDate = media.release_date || media.first_air_date;
-
+  console.log(media);
   return (
     <Link
       href={`/${type}/${media.id}`}

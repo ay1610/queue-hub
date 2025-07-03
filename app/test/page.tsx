@@ -1,4 +1,5 @@
-//eslint-ignore
+/* eslint-disable */
+/* copilot-ignore-file */
 // copilot:ignore
 "use client";
 import { Button } from "@/components/ui/button";
@@ -95,7 +96,10 @@ export default function TestPage() {
   const handleNewRow = () => {
     setList((prevList) => [
       ...prevList,
-      { id: prevList.length > 0 ? Math.max(...prevList.map((i) => i.id)) + 1 : 1, items: 0 },
+      {
+        id: prevList.length > 0 ? Math.max(...prevList.map((i) => i.id)) + 1 : 1,
+        items: 0,
+      },
     ]);
   };
   const handleDeleteRow = (cartItem: CartItem) => {
@@ -108,7 +112,7 @@ export default function TestPage() {
     }
     const timeout = setTimeout(() => {
       console.log("Call API");
-      setMessage(`API Results for query ========${query}`);
+      setMessage(`API Results for query ======== ${query}`);
     }, 500);
     return () => {
       clearTimeout(timeout);

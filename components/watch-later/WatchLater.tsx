@@ -2,13 +2,42 @@
 import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-// Will be used when feature is implemented
-// import { useWatchLaterList } from "@/lib/watch-later-hooks";
+import { useWatchLaterList } from "@/lib/watch-later-hooks";
+import { useWatchLaterMediaInfo, MediaDetails } from "@/lib/watch-later-details-hooks";
+import { TMDBMovie, TMDBTVShow } from "@/lib/types/tmdb";
+import { WatchLaterMediaType } from "@/lib/types/watch-later";
+import { MediaCard } from "../media-card/MediaCard";
+
+/**
+ * Type guard to check if media is a movie
+ */
+function isMovie(media: MediaDetails): media is TMDBMovie {
+  return "title" in media;
+}
+
+/**
+ * Type guard to check if media is a TV show
+ */
+function isTVShow(media: MediaDetails): media is TMDBTVShow {
+  return "name" in media;
+}
 
 export default function WatchLater() {
-  // Commented out for now while the feature is in development
-  // const { data: watchLaterData, error, isLoading } = useWatchLaterList();
+  // Get the basic watch later list (IDs and media types)
+  const {
+    data: watchLaterData,
+    error: watchLaterError,
+    isLoading: isWatchLaterLoading,
+  } = useWatchLaterList();
 
+  // This returns an array of query results, one for each item in the watch later list
+  // Each result contains detailed information about the media item
+  const watchLaterDetails = useWatchLaterMediaInfo(watchLaterData?.data || []);
+
+  // Log the watch later details to the console for debugging
+  console.log("Watch Later Details:", watchLaterDetails);
+
+  // Implement your UI here, using the data from the hooks
   return (
     <Card className={cn("w-full max-w-2xl mx-auto mt-10")}>
       <CardHeader>
@@ -17,27 +46,40 @@ export default function WatchLater() {
         </h1>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col items-center justify-center py-12 space-y-4">
-          <h3 className="text-xl font-medium">Coming Soon</h3>
-          <p className="text-center text-muted-foreground max-w-md">TBD</p>
-        </div>
+        {/* TODO: Implement your custom UI here using the data from the hooks */}
+        {isWatchLaterLoading && <p>Loading your watch list...</p>}
+        {watchLaterError && <p>Error loading watch list</p>}
+        {!isWatchLaterLoading &&
+          !watchLaterError &&
+          (!watchLaterData || watchLaterData.data.length === 0) && <p>Your watch list is empty</p>}
+        {!isWatchLaterLoading &&
+          !watchLaterError &&
+          watchLaterData &&
+          watchLaterData.data.length > 0 && (
+            <>
+              <p>Found {watchLaterData.data.length} items in your watch list</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 justify-center">
+                {watchLaterData?.data.map((item, index) => {
+                  const details = watchLaterDetails[index];
 
-        {/* Original code commented out for reference
-          {isLoading && <p className="text-center py-4">Loading your watch list...</p>}
-          {error && <p className="text-red-500 text-center py-4">Error loading watch list</p>}
-          {!isLoading && !error && !watchLaterData?.data.length && (
-            <p className="text-muted-foreground text-center py-8">
-              Your watch list is empty. Add movies or TV shows to get started.
-            </p>
+                  // Skip rendering if details aren't loaded yet
+                  if (!details?.data) return null;
+
+                  return (
+                    <div key={`${item.mediaType}-${item.mediaId}`}>
+                      {isMovie(details.data) ? (
+                        <MediaCard media={details.data} type="movie" isInWatchLater={true} />
+                      ) : (
+                        isTVShow(details.data) && (
+                          <MediaCard media={details.data} type="tv" isInWatchLater={true} />
+                        )
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
-          {!isLoading && !error && watchLaterData && watchLaterData.data.length > 0 && (
-            <div className="space-y-4">
-              <p className="text-center">
-                Found {watchLaterData.data.length} items in your watch list.
-              </p>
-            </div>
-          )}
-          */}
       </CardContent>
     </Card>
   );

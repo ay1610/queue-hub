@@ -3,6 +3,7 @@ import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
+import { DEFAULT_CACHE } from "@/lib/cache-config";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -10,8 +11,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            // Default: data is fresh for 5 minutes (override per-query with staleTime option)
-            staleTime: 1000 * 60 * 5, // 5 minutes
+            // Using centralized cache configuration
+            staleTime: DEFAULT_CACHE.staleTime,
+            cacheTime: DEFAULT_CACHE.gcTime,
             retry: (failureCount, error) => {
               // Don't retry on 4xx errors except for 408, 429
               if (error && typeof error === "object" && "status" in error) {

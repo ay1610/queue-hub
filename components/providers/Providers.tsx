@@ -13,7 +13,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           queries: {
             // Using centralized cache configuration
             staleTime: DEFAULT_CACHE.staleTime,
-            cacheTime: DEFAULT_CACHE.gcTime,
+            gcTime: DEFAULT_CACHE.gcTime,
             retry: (failureCount, error) => {
               // Don't retry on 4xx errors except for 408, 429
               if (error && typeof error === "object" && "status" in error) {

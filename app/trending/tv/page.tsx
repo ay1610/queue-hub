@@ -1,5 +1,5 @@
 import React from "react";
-import { TrendingTVShows } from "@/components/trending-tvshows/TrendingTVShows";
+import { TrendingTVShowsClient } from "@/components/trending-tvshows/TrendingTVShowsClient";
 import { getProtectedUser } from "@/lib/auth-helpers";
 
 /**
@@ -7,5 +7,5 @@ import { getProtectedUser } from "@/lib/auth-helpers";
  */
 export default async function TrendingTVShowsPage() {
   await getProtectedUser(); // Redirects to sign-in if not authenticated
-  return <TrendingTVShows />;
+  return <TrendingTVShowsClient />;
 }

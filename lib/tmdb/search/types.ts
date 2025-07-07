@@ -1,4 +1,4 @@
-import type { TMDBMovie, TMDBBaseResponse } from "../types";
+import type { TMDBMovie, TMDBBaseResponse } from "@/lib/types/tmdb";
 
 // Types for TMDB Search API
 export interface SearchMoviesResponse extends TMDBBaseResponse {

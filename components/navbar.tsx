@@ -63,6 +63,9 @@ export default function Navbar() {
           <Link href="/trending/tv" className="font-medium ml-2">
             Trending TV
           </Link>
+          <Link href="/watch-list" className="font-medium ml-2">
+            Watch List
+          </Link>
           <Link href="/test" className="font-medium ml-4">
             Test
           </Link>

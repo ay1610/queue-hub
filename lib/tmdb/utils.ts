@@ -1,5 +1,5 @@
 import { tmdbClient } from "./client";
-import type { TMDBImageSize, TMDBBackdropSize } from "./types";
+import type { TMDBImageSize, TMDBBackdropSize } from "@/lib/types/tmdb";
 
 /**
  * Helper to get TMDB image URL.
@@ -8,7 +8,7 @@ import type { TMDBImageSize, TMDBBackdropSize } from "./types";
  * @returns The full image URL or an empty string if no path.
  */
 export function getImageUrl(path: string | null, size: TMDBImageSize = "w500"): string {
-  return path ? tmdbClient.getImageUrl(path, size) ?? "" : "";
+  return path ? (tmdbClient.getImageUrl(path, size) ?? "") : "";
 }
 
 /**
@@ -18,5 +18,5 @@ export function getImageUrl(path: string | null, size: TMDBImageSize = "w500"): 
  * @returns The full backdrop image URL or an empty string if no path.
  */
 export function getBackdropUrl(path: string | null, size: TMDBBackdropSize = "w780"): string {
-  return path ? tmdbClient.getBackdropUrl(path, size) ?? "" : "";
+  return path ? (tmdbClient.getBackdropUrl(path, size) ?? "") : "";
 }

@@ -3,6 +3,7 @@
 import React from "react";
 import { useSearchParams } from "next/navigation";
 import { useMediaSearch } from "@/lib/tmdb/search/hooks";
+import { useWatchLaterLookup } from "@/lib/watch-later-hooks";
 import { MediaCard } from "@/components/media-card/MediaCard";
 import { SearchResultSkeleton } from "@/components/search/SearchResultSkeleton";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ export default function SearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? "";
   const { data, error, isLoading } = useMediaSearch(query);
+  const watchLaterLookup = useWatchLaterLookup();
   const totalResults = data?.total_results || 0;
 
   if (isLoading) {
@@ -52,7 +54,15 @@ export default function SearchPage() {
             const mediaType =
               item.media_type === "movie" || item.media_type === "tv" ? item.media_type : undefined;
             if (!mediaType) return null;
-            return <MediaCard key={item.id} media={item} type={mediaType}></MediaCard>;
+            const isItemInWatchLater = watchLaterLookup[`${item.id}-${mediaType}`] || false;
+            return (
+              <MediaCard
+                key={item.id}
+                media={item}
+                type={mediaType}
+                isInWatchLater={isItemInWatchLater}
+              />
+            );
           })}
         </div>
       ) : (

@@ -1,5 +1,5 @@
 import React from "react";
-import type { TMDBTVShow } from "@/lib/tmdb/types";
+import type { TMDBTVShow } from "@/lib/types/tmdb";
 import { MediaHero } from "@/components/shared/MediaHero";
 
 /**

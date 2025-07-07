@@ -1,4 +1,4 @@
-import { TMDBMovie, TMDBTVShow } from "./types";
+import { TMDBMovie, TMDBTVShow } from "@/lib/types/tmdb";
 import { tmdbFetcher } from "./fetcher";
 
 type SearchResult = {
@@ -16,5 +16,5 @@ export async function searchTMDB(query: string): Promise<SearchResult> {
   }
 
   const endpoint = `/search/multi?query=${encodeURIComponent(query)}`;
-  return fetcher<SearchResult>(endpoint);
+  return tmdbFetcher<SearchResult>(endpoint);
 }

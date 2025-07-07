@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { searchMedia } from "./client";
-import type { DetailedMediaSearchResult } from "./types";
+import type { DetailedMediaSearchResult } from "@/lib/types/tmdb";
 
 export function useMediaSearch(query: string, page = 1) {
   return useQuery<DetailedMediaSearchResult>({

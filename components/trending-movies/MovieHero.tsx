@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { TMDBMovie } from "@/lib/tmdb/types";
+import type { TMDBMovie } from "@/lib/types/tmdb";
 import { MediaHero } from "@/components/shared/MediaHero";
 
 /**

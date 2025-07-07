@@ -1,5 +1,5 @@
 import { getProtectedUser } from "@/lib/auth-helpers";
-import { TrendingMovies } from "@/components/trending-movies";
+import { TrendingMoviesClient } from "@/components/trending-movies/TrendingMoviesClient";
 import { Banner } from "@/components/ui/banner";
 
 export default async function Page() {
@@ -7,7 +7,7 @@ export default async function Page() {
   return (
     <>
       <Banner>{`Welcome, ${user?.name}! Email: ${user?.email}`}</Banner>
-      <TrendingMovies />
+      <TrendingMoviesClient />
     </>
   );
 }

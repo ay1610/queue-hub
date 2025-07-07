@@ -1,6 +1,6 @@
 // TMDB Search API client
 import { tmdbFetcher } from "../fetcher";
-import type { DetailedMediaSearchResult, SearchMoviesResponse } from "./types";
+import type { DetailedMediaSearchResult, SearchMoviesResponse } from "@/lib/types/tmdb";
 
 /**
  * Searches for movies on TMDB by query string.

@@ -1,7 +1,6 @@
 // TMDB Movie API client
 import { tmdbFetcher } from "../fetcher";
-import type { TrendingMoviesResponse } from "./types";
-import type { TMDBMovie } from "../types";
+import type { TrendingMoviesResponse, TMDBMovie } from "@/lib/types/tmdb";
 
 /**
  * Fetches trending movies from TMDB.

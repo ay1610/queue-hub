@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { MediaRatingBadge } from "@/components/media-rating-badge/MediaRatingBadge";
+import { WatchLaterButton } from "../watch-later/WatchLaterButton";
 
 /**
  * MediaCardProps defines the props for the MediaCard component.
@@ -20,6 +21,7 @@ interface MediaCardProps {
     release_date?: string; // For movies
   };
   type: "movie" | "tv" | "person"; // Specifies whether the media is a movie or TV show or person
+  isInWatchLater?: boolean;
 }
 
 /**
@@ -28,10 +30,10 @@ interface MediaCardProps {
  * @param media - The media object containing details.
  * @param type - The type of media ("movie" or "tv"). It also includes person
  */
-export function MediaCard({ media, type }: MediaCardProps) {
+export function MediaCard({ media, type, isInWatchLater = false }: MediaCardProps) {
   const mediaTitle = media.title || media.name;
   const mediaDate = media.release_date || media.first_air_date;
-  console.log(media);
+
   return (
     <Link
       href={`/${type}/${media.id}`}
@@ -60,6 +62,11 @@ export function MediaCard({ media, type }: MediaCardProps) {
         <div className="absolute bottom-2 left-2 z-10">
           <MediaRatingBadge voteAverage={media.vote_average} size="sm" />
         </div>
+        {type === "movie" || type === "tv" ? (
+          <div className="absolute bottom-2 right-2 z-10">
+            <WatchLaterButton mediaId={media.id} mediaType={type} isInWatchLater={isInWatchLater} />
+          </div>
+        ) : null}
       </div>
       <div className={cn("text-center mt-2")} aria-label={`Media title and date for ${mediaTitle}`}>
         <div className="font-semibold text-base line-clamp-2">{mediaTitle}</div>

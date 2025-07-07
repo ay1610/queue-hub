@@ -1,6 +1,5 @@
 import { tmdbFetcher } from "../fetcher";
-import type { TMDBTVShow } from "../types";
-import type { PopularTVShowsResponse } from "./types";
+import type { TMDBTVShow, PopularTVShowsResponse } from "@/lib/types/tmdb";
 
 // TMDB TV API client
 

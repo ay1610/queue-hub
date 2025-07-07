@@ -64,7 +64,12 @@ export function MediaCard({ media, type, isInWatchLater = false }: MediaCardProp
         </div>
         {type === "movie" || type === "tv" ? (
           <div className="absolute bottom-2 right-2 z-10">
-            <WatchLaterButton mediaId={media.id} mediaType={type} isInWatchLater={isInWatchLater} />
+            <WatchLaterButton 
+              mediaId={media.id} 
+              mediaType={type} 
+              isInWatchLater={isInWatchLater} 
+              title={mediaTitle}
+            />
           </div>
         ) : null}
       </div>

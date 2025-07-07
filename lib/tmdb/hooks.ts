@@ -1,14 +1,7 @@
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { tmdbClient } from "./client";
 import type { TMDBMovieFilters, TMDBTVFilters, TMDBMediaType, TMDBTimeWindow } from "./types";
-
-// Centralized cache timing configuration for TMDB queries
-const TMDB_CACHE = {
-  SHORT: { staleTime: 5 * 60 * 1000, gcTime: 10 * 60 * 1000 }, // 5 min/10 min
-  MEDIUM: { staleTime: 15 * 60 * 1000, gcTime: 30 * 60 * 1000 }, // 15 min/30 min
-  LONG: { staleTime: 30 * 60 * 1000, gcTime: 60 * 60 * 1000 }, // 30 min/1 hr
-  VERY_LONG: { staleTime: 24 * 60 * 60 * 1000, gcTime: 7 * 24 * 60 * 60 * 1000 }, // 24 hr/7 days
-};
+import { TMDB_CACHE } from "../cache-config";
 
 // Query key factory for better cache management
 export const tmdbKeys = {

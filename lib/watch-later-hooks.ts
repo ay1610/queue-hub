@@ -3,18 +3,13 @@
 import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from "@tanstack/react-query";
 import { createWatchLaterLookup } from "./watch-later-client-helpers";
 import { WatchLaterResponse, WatchLaterMutationParams } from "./types/watch-later";
+import { WATCH_LATER_CACHE } from "./cache-config";
 
 // Query key factory for watch later functionality
 export const watchLaterKeys = {
   all: ["watch-later"] as const,
   lists: () => [...watchLaterKeys.all, "list"] as const,
   list: () => [...watchLaterKeys.lists()] as const,
-} as const;
-
-// Cache configuration for watch later queries
-const WATCH_LATER_CACHE = {
-  staleTime: 1000 * 60 * 5, // 5 minutes
-  gcTime: 1000 * 60 * 10, // 10 minutes
 } as const;
 
 // Reusable query options factory

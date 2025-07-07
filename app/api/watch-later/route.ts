@@ -90,14 +90,12 @@ export async function DELETE(request: NextRequest) {
     }
 
     const userId = session.user.id;
-    const { searchParams } = new URL(request.url);
-    const mediaId = searchParams.get("mediaId");
-    const mediaType = searchParams.get("mediaType");
-
+    const body = await request.json();
+    const { mediaId, mediaType } = body;
     // Validate input
     if (!mediaId || !mediaType) {
       return NextResponse.json(
-        { error: "mediaId and mediaType query parameters are required" },
+        { error: "mediaId and mediaType are required in the request body" },
         { status: 400 }
       );
     }

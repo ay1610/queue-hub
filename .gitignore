@@ -46,6 +46,9 @@ next-env.d.ts
 .github/copilot-instructions.md
 
 # Ignore test page 
+# Note: This file is kept in the repository but changes are ignored using:
+# git update-index --skip-worktree app/test/page.tsx
+# To start tracking changes again use: git update-index --no-skip-worktree app/test/page.tsx
 /app/test/page.tsx
 
 # Ignore all markdown files except README.md in the root

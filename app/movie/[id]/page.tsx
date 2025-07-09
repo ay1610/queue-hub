@@ -33,17 +33,5 @@ export default async function MovieDetailPageWrapper(props: { params: Promise<{ 
   const watchProviders: WatchProvidersResponse = await getMovieWatchProviders(Number(params.id));
   const usProviders = watchProviders?.results?.US;
 
-  return (
-    <MediaDetailPage
-      title={movie.title}
-      tagline={movie.tagline}
-      overview={movie.overview}
-      backdropPath={movie.backdrop_path}
-      posterPath={movie.poster_path}
-      genres={movie.genres}
-      voteAverage={movie.vote_average}
-      trailer={trailer}
-      usProviders={usProviders}
-    />
-  );
+  return <MediaDetailPage media={movie} trailer={trailer} usProviders={usProviders} />;
 }

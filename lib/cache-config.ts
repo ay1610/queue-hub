@@ -16,8 +16,8 @@ export const DEFAULT_CACHE = {
 
 // Media details change less frequently than user data
 export const MEDIA_DETAILS_CACHE = {
-  staleTime: 10 * MINUTE, // 10 minutes
-  gcTime: 20 * MINUTE, // 20 minutes (was cacheTime in v4)
+  staleTime: 30 * MINUTE, // 30 minutes - media details rarely change
+  gcTime: 24 * HOUR, // 24 hours - keep in cache longer (was cacheTime in v4)
 } as const;
 
 // User data should be fresher

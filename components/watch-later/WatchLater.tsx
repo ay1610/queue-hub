@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { useWatchLaterList } from "@/lib/watch-later-hooks";
 import { useWatchLaterMediaInfo, MediaDetails } from "@/lib/watch-later-details-hooks";
 import { TMDBMovie, TMDBTVShow } from "@/lib/types/tmdb";
-import { WatchLaterMediaType } from "@/lib/types/watch-later";
 import { MediaCard } from "../media-card/MediaCard";
 
 /**
@@ -66,7 +65,7 @@ export default function WatchLater() {
                   if (!details?.data) return null;
 
                   return (
-                    <div key={`${item.mediaType}-${item.mediaId}`}>
+                    <div key={`${item.mediaType}-${item.mediaId}`} className="relative">
                       {isMovie(details.data) ? (
                         <MediaCard media={details.data} type="movie" isInWatchLater={true} />
                       ) : (

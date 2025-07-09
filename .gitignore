@@ -45,6 +45,9 @@ next-env.d.ts
 /lib/generated/prisma
 .github/copilot-instructions.md
 
+# Ignore test page 
+/app/test/page.tsx
+
 # Ignore all markdown files except README.md in the root
 *.md
 !README.md

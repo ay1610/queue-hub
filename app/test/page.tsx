@@ -69,7 +69,27 @@ const tabData = [
     ),
   },
 ];
+
+interface Movie {
+  id: number;
+  title: string;
+  year: number;
+}
+
+interface WatchListMovie extends Movie {
+  watched: boolean;
+}
+const movieData: Movie[] = [
+  { id: 1, title: "Inception", year: 2010 },
+  { id: 2, title: "Interstellar", year: 2014 },
+  { id: 3, title: "The Dark Knight", year: 2008 },
+  { id: 4, title: "The Prestige", year: 2006 },
+  { id: 5, title: "Tenet", year: 2020 },
+  { id: 6, title: "Dunkirk", year: 2017 },
+];
+
 const initialMovies = ["Inception", "The Dark Knight", "Interstellar", "The Prestige", "Tenet"];
+const searchDebounceTime = 500;
 
 export default function TestPage() {
   const [list, setList] = useState(cartList);
@@ -78,6 +98,37 @@ export default function TestPage() {
   const [index, setIndex] = useState(0);
   const [movies, setMovies] = useState(initialMovies);
   const [newMovie, setNewMovie] = useState("");
+  const [watchlist, setWatchlist] = useState<WatchListMovie[]>([]);
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchDebounce, setSearchDebounce] = useState<string>("");
+  const [movieList, setMovieList] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => {
+        setSearchDebounce(searchQuery.trim());
+      },
+
+      searchDebounceTime
+    );
+
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
+
+  const searchedMovieList = movieData.filter((movie) =>
+    movie.title.toLowerCase().trim().includes(searchDebounce.toLowerCase().trim())
+  );
+
+  const handleSelectButton = (movie: Movie) => {
+    if (isMovieSelected(movie)) {
+      return;
+    }
+    setMovieList((prevList) => [...prevList, movie]);
+  };
+  const handleRemoveButton = (movie: Movie) => {
+    setMovieList((prevList) => prevList.filter((item) => item.id !== movie.id));
+  };
 
   const handlePlus = (cartItem: CartItem) => {
     // call SetList with cartItem with updated value
@@ -130,10 +181,46 @@ export default function TestPage() {
     setMovies((previousMovies) => [...previousMovies, newMovieTrim]);
   };
 
+  const addToWatchList = (movie: { id: number; title: string; year: number }) => {
+    if (watchlist.some((m) => m.id === movie.id)) return;
+    const movieWithStatus = { ...movie, watched: false };
+    setWatchlist((prevList) => [...prevList, movieWithStatus]);
+  };
+
+  const removeMovieFromWatchList = (movie: Movie) => {
+    setWatchlist((prevList) => prevList.filter((item) => item.id !== movie.id));
+  };
+  const watchedMovies = watchlist.filter((movie) => movie.watched);
+  const unwatchedMovies = watchlist.filter((movie) => !movie.watched);
+
+  const toggleMovieWatchList = (movie: Movie) => {
+    if (isMovieSelected(movie)) {
+      removeMovieFromWatchList(movie);
+    } else {
+      addToWatchList(movie);
+    }
+  };
+  const isMovieSelected = (movie: Movie): boolean => {
+    return movieList.some((movieItem: Movie) => movieItem.id === movie.id);
+  };
+  const isMovieInWatchList = (movie: Movie): boolean => {
+    return watchlist.some((watListMovie: WatchListMovie) => watListMovie.id === movie.id);
+  };
+
+  const handleMarkUnwatched = (movie: Movie) => {
+    setWatchlist((prevList) =>
+      prevList.map((item) => (item.id === movie.id ? { ...item, watched: true } : item))
+    );
+  };
+  const handleMarkWatched = (movie: Movie) => {
+    setWatchlist((prevList) =>
+      prevList.map((item) => (item.id === movie.id ? { ...item, watched: false } : item))
+    );
+  };
+
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       <Card className={cn("w-full max-w-2xl")}>
-        )
         <CardHeader>
           <h1 className="text-2xl font-semibold">Test Page</h1>
         </CardHeader>
@@ -142,18 +229,81 @@ export default function TestPage() {
             <div className="rounded-lg bg-white/30 p-8 text-black shadow-lg backdrop-blur-sm dark:bg-black/30 dark:text-white">
               <div>
                 <input
+                  type="text"
+                  placeholder="Search movies..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full max-w-md px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                {searchedMovieList.map((movie) => (
+                  <div key={movie.id}>
+                    {movie.title} --- {movie.year}{" "}
+                    <Button
+                      onClick={() => handleSelectButton(movie)}
+                      disabled={isMovieSelected(movie)}
+                    >
+                      {" "}
+                      Select
+                    </Button>
+                  </div>
+                ))}
+                Selected
+                {movieList.map((movie) => (
+                  <div key={movie.id}>
+                    {movie.title} --- {movie.year}{" "}
+                    <Button onClick={() => handleRemoveButton(movie)}> Remove</Button>
+                  </div>
+                ))}
+                {/* {movieData.map((movie) => (
+                  <div key={movie.id}>
+                    {movie.title} --- {movie.year}
+                    <span>
+                      <Button onClick={() => toggleMovieWatchList(movie)}>
+                        {isMovieInWatchList(movie) ? "Remove" : "Add"}{" "}
+                      </Button>
+                    </span>
+                  </div>
+                ))}
+
+                <div>
+                  <h3>✅ Watched</h3>
+                  <ul>
+                    {watchedMovies.map((movie) => (
+                      <li key={movie.id}>
+                        {movie.title} — ({movie.year}){" "}
+                        <Button onClick={() => handleMarkWatched(movie)}> Mark as Unwatched</Button>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <h3>📌 Unwatched</h3>
+                  <ul>
+                    {unwatchedMovies.map((movie) => (
+                      <li key={movie.id}>
+                        {movie.title} — ({movie.year}){" "}
+                        <Button onClick={() => handleMarkUnwatched(movie)}> Mark as Watched</Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div> */}
+              </div>
+
+              {/* <div>
+                <input
                   className="rounded border border-gray-300 bg-white p-2 text-black dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
-              </div>
-              {message && <div className="mt-4">{message} </div>}
+              </div> */}
+              {/* {message && <div className="mt-4">{message} </div>}
               {<Tabs tabs={tabData} defaultIndex={index} />}
               <input
                 className="rounded border border-gray-300 bg-white p-2 text-black dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                 value={newMovie}
                 onChange={(e) => setNewMovie(e.target.value)}
               />
+
+              
 
               <Button onClick={handleAddNewMovie}>Add Movie</Button>
               <ul>
@@ -177,20 +327,14 @@ export default function TestPage() {
               </div> */}
             </div>
           </div>
-          <SignUpForm />
+          {/* <SignUpForm /> */}
         </CardContent>
       </Card>
     </div>
   );
 }
 
-export function Row({
-  cartItem,
-  handlePlus,
-  handleMinus,
-  handleNewRow,
-  handleDeleteRow,
-}: RowProps) {
+function Row({ cartItem, handlePlus, handleMinus, handleNewRow, handleDeleteRow }: RowProps) {
   return (
     <div className="flex items-center gap-4">
       <span>
@@ -237,7 +381,7 @@ type TabsProps = {
   defaultIndex?: number; // optional, defaults to 0
 };
 
-export function Tabs({ tabs, defaultIndex }: TabsProps) {
+function Tabs({ tabs, defaultIndex }: TabsProps) {
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
   return (
     <div role="tablist" aria-label="Tabs" className="mt-4">
@@ -268,7 +412,7 @@ export function Tabs({ tabs, defaultIndex }: TabsProps) {
   );
 }
 
-export function SignUpForm() {
+function SignUpForm() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");

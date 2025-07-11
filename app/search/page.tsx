@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMediaSearch } from "@/lib/tmdb/search/hooks";
 import { useWatchLaterLookup } from "@/lib/watch-later-hooks";
@@ -11,12 +11,13 @@ import { cn } from "@/lib/utils";
 /**
  * SearchPage component for displaying search results.
  */
-export default function SearchPage() {
+
+function SearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? "";
   const { data, error, isLoading } = useMediaSearch(query);
   const watchLaterLookup = useWatchLaterLookup();
-  const totalResults = data?.total_results || 0;
+  const totalResults = Array.isArray(data?.results) ? data.results.length : 0;
 
   if (isLoading) {
     return (
@@ -48,17 +49,24 @@ export default function SearchPage() {
       </div>
 
       {data?.results?.length ? (
-        <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 justify-center")}>
+        <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 justify-center")}> 
           {data?.results.map((item) => {
-            // Only allow "movie" or "tv" as type TODO: Add persons to the Media card
-            const mediaType =
-              item.media_type === "movie" || item.media_type === "tv" ? item.media_type : undefined;
+            let mediaType: "movie" | "tv" | undefined;
+            if (item.title) {
+              mediaType = "movie";
+            } else if (item.name) {
+              mediaType = "tv";
+            }
             if (!mediaType) return null;
             const isItemInWatchLater = watchLaterLookup[`${item.id}-${mediaType}`] || false;
+            const patchedItem = {
+              ...item,
+              vote_average: typeof item.vote_average === "number" ? item.vote_average : 0,
+            };
             return (
               <MediaCard
                 key={item.id}
-                media={item}
+                media={patchedItem}
                 type={mediaType}
                 isInWatchLater={isItemInWatchLater}
               />
@@ -82,5 +90,13 @@ export default function SearchPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SearchPageWrapper() {
+  return (
+    <Suspense fallback={<SearchResultSkeleton />}>
+      <SearchPage />
+    </Suspense>
   );
 }

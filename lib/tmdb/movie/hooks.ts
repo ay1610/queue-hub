@@ -13,3 +13,35 @@ export function useTrendingMovies(page: number = 1) {
     ...DEFAULT_CACHE,
   });
 }
+
+import { getMovieDetails } from "./client";
+import { getMovieVideos } from "./videos";
+import { getMovieWatchProviders } from "./watchProviders";
+import { MEDIA_DETAILS_CACHE } from "@/lib/cache-config"; // Use if available
+
+export function useMovieDetails(movieId: number) {
+  return useQuery({
+    queryKey: ["movie-details", movieId],
+    queryFn: () => getMovieDetails(movieId),
+    enabled: !!movieId,
+    ...MEDIA_DETAILS_CACHE,
+  });
+}
+
+export function useMovieVideos(movieId: number) {
+  return useQuery({
+    queryKey: ["movie-videos", movieId],
+    queryFn: () => getMovieVideos(movieId),
+    enabled: !!movieId,
+    ...MEDIA_DETAILS_CACHE,
+  });
+}
+
+export function useMovieWatchProviders(movieId: number) {
+  return useQuery({
+    queryKey: ["movie-watch-providers", movieId],
+    queryFn: () => getMovieWatchProviders(movieId),
+    enabled: !!movieId,
+    ...MEDIA_DETAILS_CACHE,
+  });
+}

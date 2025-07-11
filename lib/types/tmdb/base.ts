@@ -21,6 +21,7 @@ export interface TMDBMediaBase {
   adult: boolean;
   original_language: string;
   genre_ids: number[];
+  type: "movie" | "tv"; // Added for compatibility
 }
 
 /**

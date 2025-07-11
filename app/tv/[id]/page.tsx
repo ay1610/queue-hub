@@ -1,47 +1,75 @@
-import { getTVShowDetails } from "@/lib/tmdb/tv/client";
-import { getTVShowVideos } from "@/lib/tmdb/tv/videos";
-import { getTVShowWatchProviders } from "@/lib/tmdb/tv/watchProviders";
-import { notFound } from "next/navigation";
-import type { Metadata } from "next";
+"use client";
+
 import { MediaDetailPage } from "@/components/MediaDetailPage";
-import type { TMDBVideo } from "@/lib/tmdb/tv/videos";
-import type { WatchProvidersResponse } from "@/lib/tmdb/tv/watchProviders";
+import { useMediaDetails } from "@/lib/media-details-hooks";
+import { getFilteredGenres, getUSProviders } from "@/lib/media-utils";
+import { use } from "react";
+import { useTVGenres } from "@/lib/tmdb/tv/hooks";
+import { useTVShowVideos } from "@/lib/tmdb/tv/hooks";
+import { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
 
-export async function generateMetadata(props: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-  const params = await props.params;
-  const tv = await getTVShowDetails(Number(params.id));
-  return {
-    title: tv?.name || "TV Show Details",
-    description: tv?.overview || "TV show details page",
-  };
-}
+/**
+ * TVDetailPage - Displays detailed information for a TV show, including genres, trailer, and watch providers.
+ *
+ * @param params - Promise resolving to route parameters, expected to contain TV show id.
+ * @returns MediaDetailPage with TV show details, or loading/error/fallback UI.
+ */
+export default function TVDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const tvId = Number(id);
 
-export default async function TVDetailPageWrapper(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const tv = await getTVShowDetails(Number(params.id));
-  if (!tv) return notFound();
+  const { data: tvGenres, isLoading: genresLoading, error: genresError } = useTVGenres();
+  const {
+    data: details,
+    isLoading: detailsLoading,
+    error: detailsError,
+  } = useMediaDetails(tvId, "tv");
+  const {
+    data: tvVideosResp,
+    isLoading: videosLoading,
+    error: videosError,
+  } = useTVShowVideos(tvId);
 
-  // Fetch videos (trailers, teasers, etc.)
-  const videos = await getTVShowVideos(Number(params.id));
-  const trailer: TMDBVideo | undefined = videos.results.find(
-    (v) => v.site === "YouTube" && v.type === "Trailer"
-  );
+  if (!tvId || detailsLoading || genresLoading || videosLoading) {
+    return <div className="flex items-center justify-center h-64">Loading...</div>;
+  }
 
-  // Fetch where to watch providers (for US by default)
-  const watchProviders: WatchProvidersResponse = await getTVShowWatchProviders(Number(params.id));
-  const usProviders = watchProviders?.results?.US;
+  if (detailsError || genresError || videosError) {
+    return (
+      <div className="text-red-500 text-center py-8">
+        Error: {detailsError?.message || genresError?.message || videosError?.message}
+      </div>
+    );
+  }
+
+  if (!details) {
+    return <div className="text-gray-500 text-center py-8">Media details not found.</div>;
+  }
+
+  const title: string = details.type === "tv" ? details.name : details.title;
+  const watchProvidersRaw = details["watch/providers"];
+  const watchProviders: WatchProvidersResponse | undefined = watchProvidersRaw
+    ? { id: tvId, ...watchProvidersRaw }
+    : undefined;
+  const usProvidersRaw = getUSProviders(watchProviders);
+  const usProviders = usProvidersRaw
+    ? { ...usProvidersRaw, link: usProvidersRaw.link ?? "" }
+    : { link: "" };
+
+  const trailer = Array.isArray(tvVideosResp?.results)
+    ? tvVideosResp.results.find((v) => v.type === "Trailer" && v.site === "YouTube")
+    : undefined;
+
+  const filteredGenres = getFilteredGenres(details.genres, tvGenres);
 
   return (
     <MediaDetailPage
-      title={tv.name}
-      tagline={tv.tagline}
-      overview={tv.overview}
-      backdropPath={tv.backdrop_path}
-      posterPath={tv.poster_path}
-      genres={tv.genres}
-      voteAverage={tv.vote_average}
+      title={title}
+      overview={details.overview}
+      backdropPath={details.backdrop_path}
+      posterPath={details.poster_path || ""}
+      genres={filteredGenres}
+      voteAverage={details.vote_average}
       trailer={trailer}
       usProviders={usProviders}
     />

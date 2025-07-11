@@ -66,14 +66,14 @@ export function MediaDetailPage({
               />
             </div>
           )}
-          {/* Title, Tagline, Rating */}
-          <div className="flex flex-col justify-end md:pb-8">
+          {/* Title, Tagline, Overview, Rating, Genres, Providers */}
+          <div className="flex flex-col justify-end md:pb-8 bg-black/60 dark:bg-zinc-900/70 p-6 rounded-lg shadow max-w-2xl">
             <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow mb-2">
               {title}
             </h1>
             {tagline && <p className="italic text-lg text-gray-200 mb-2">{tagline}</p>}
             {overview && (
-              <p className="text-base text-gray-100 dark:text-gray-300 leading-relaxed mb-4 max-w-2xl">
+              <p className="text-base leading-relaxed mb-4 text-gray-100 dark:text-gray-300">
                 {overview}
               </p>
             )}
@@ -92,6 +92,31 @@ export function MediaDetailPage({
                     </span>
                   ))}
                 </div>
+              )}
+              {usProviders && usProviders.flatrate && usProviders.flatrate.length > 0 ? (
+                <div className="flex gap-2 flex-wrap items-center">
+                  {usProviders.flatrate.map((provider) => (
+                    <a
+                      key={provider.provider_id}
+                      className="inline-flex flex-row items-center gap-2 group hover:scale-105 transition-transform"
+                    >
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
+                        alt={provider.provider_name}
+                        width={45}
+                        height={45}
+                        className="rounded bg-white dark:bg-zinc-900 p-1 shadow group-hover:ring-2 group-hover:ring-blue-400"
+                      />
+                      <span className="text-xs text-gray-700 dark:text-gray-300 text-center">
+                        {provider.provider_name}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  No streaming providers found.
+                </span>
               )}
             </div>
             {/* Trailer Button - open dialog on click */}

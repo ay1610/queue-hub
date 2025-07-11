@@ -36,5 +36,6 @@ export interface DetailedMediaSearchResult {
     original_name?: string; // TV-specific
     overview: string;
     poster_path: string;
+    vote_average?: number;
   }>;
 }

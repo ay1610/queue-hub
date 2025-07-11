@@ -47,7 +47,7 @@ export interface TMDBTVShow {
 export type MediaDetails = {
   id: number;
   title?: string; // Add for movie compatibility
-  name?: string;  // Add for TV compatibility
+  name?: string; // Add for TV compatibility
   tagline?: string;
   overview: string;
   genres?: TMDBGenre[];

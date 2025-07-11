@@ -16,7 +16,8 @@ export default function SearchPage() {
   const query = searchParams.get("query") ?? "";
   const { data, error, isLoading } = useMediaSearch(query);
   const watchLaterLookup = useWatchLaterLookup();
-  const totalResults = data?.total_results || 0;
+  // Use results length for totalResults, fallback to 0
+  const totalResults = Array.isArray(data?.results) ? data.results.length : 0;
 
   if (isLoading) {
     return (

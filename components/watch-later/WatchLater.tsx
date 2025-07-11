@@ -3,7 +3,8 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useWatchLaterList } from "@/lib/watch-later-hooks";
-import { useWatchLaterMediaInfo, MediaDetails } from "@/lib/watch-later-details-hooks";
+import { useWatchLaterMediaInfo } from "@/lib/watch-later-details-hooks";
+import { MediaDetails } from "@/lib/tmdb/types";
 import { TMDBMovie, TMDBTVShow } from "@/lib/types/tmdb";
 import { MediaCard } from "../media-card/MediaCard";
 
@@ -33,8 +34,6 @@ export default function WatchLater() {
   // Each result contains detailed information about the media item
   const watchLaterDetails = useWatchLaterMediaInfo(watchLaterData?.data || []);
 
-  // Log the watch later details to the console for debugging
-  console.log("Watch Later Details:", watchLaterDetails);
 
   // Implement your UI here, using the data from the hooks
   return (
@@ -45,7 +44,6 @@ export default function WatchLater() {
         </h1>
       </CardHeader>
       <CardContent>
-        {/* TODO: Implement your custom UI here using the data from the hooks */}
         {isWatchLaterLoading && <p>Loading your watch list...</p>}
         {watchLaterError && <p>Error loading watch list</p>}
         {!isWatchLaterLoading &&

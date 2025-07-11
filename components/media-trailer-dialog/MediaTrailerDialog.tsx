@@ -5,7 +5,9 @@ import {
   DialogContent,
   DialogClose,
   DialogOverlay,
+  DialogTitle,
 } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { PlayIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -33,6 +35,9 @@ export function MediaTrailerDialog({ trailer }: MediaTrailerDialogProps) {
       </DialogTrigger>
       <DialogOverlay className="backdrop-blur-sm" />
       <DialogContent className="!w-[75vw] !max-w-none !sm:max-w-none p-0 bg-black rounded-lg overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+        <VisuallyHidden>
+          <DialogTitle>Trailer</DialogTitle>
+        </VisuallyHidden>
         <div className="flex items-center justify-end px-6 pt-6 pb-2">
           <DialogClose className="text-white hover:text-gray-300 focus:outline-none text-2xl px-2">
             ×

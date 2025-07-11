@@ -1,5 +1,5 @@
 import { tmdbFetcher } from "../fetcher";
-import type { TMDBTVShow, PopularTVShowsResponse } from "@/lib/types/tmdb";
+import type { TMDBTVShow, PopularTVShowsResponse, TMDBGenre } from "@/lib/types/tmdb";
 
 // TMDB TV API client
 
@@ -28,8 +28,18 @@ export async function getTrendingTVShows(page: number = 1): Promise<PopularTVSho
  * @param id - The TMDB TV show ID.
  * @returns A promise resolving to the TV show details.
  */
-export async function getTVShowDetails(id: number): Promise<TMDBTVShow> {
-  return tmdbFetcher<TMDBTVShow>(`/tv/${id}`);
+export async function getTVShowDetails(id: number, appendToResponse?: string): Promise<TMDBTVShow> {
+  const url = appendToResponse ? `/tv/${id}?append_to_response=${appendToResponse}` : `/tv/${id}`;
+  return tmdbFetcher<TMDBTVShow>(url);
+}
+
+/**
+ * Fetches the list of TV genres from TMDB.
+ *
+ * @returns A promise resolving to the list of TV genres.
+ */
+export async function getTVGenres(): Promise<TMDBGenre[]> {
+  return tmdbFetcher<TMDBGenre[]>("/genre/tv/list");
 }
 
 // ...add TV API functions here...

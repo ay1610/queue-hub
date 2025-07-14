@@ -1,6 +1,6 @@
 // TMDB Movie API client
 import { tmdbFetcher } from "../fetcher";
-import type { TrendingMoviesResponse, TMDBMovie } from "@/lib/types/tmdb";
+import type { TrendingMoviesResponse, TMDBMovie, TMDBGenre } from "@/lib/types/tmdb";
 
 /**
  * Fetches trending movies from TMDB.
@@ -23,6 +23,10 @@ export async function getMovieDetails(id: number, appendToResponse?: string): Pr
     ? `/movie/${id}?append_to_response=${appendToResponse}`
     : `/movie/${id}`;
   return tmdbFetcher<TMDBMovie>(url);
+}
+
+export async function getMovieGenres() {
+  return tmdbFetcher<TMDBGenre[]>("/genre/movie/list");
 }
 
 export {};

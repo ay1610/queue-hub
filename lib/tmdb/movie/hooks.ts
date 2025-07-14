@@ -2,9 +2,9 @@
 
 // React hooks for TMDB Movie API
 import { useQuery } from "@tanstack/react-query";
-import { getTrendingMovies } from "./client";
+import { getTrendingMovies, getMovieGenres } from "./client";
 import type { TrendingMoviesResponse } from "@/lib/types/tmdb";
-import { DEFAULT_CACHE } from "@/lib/cache-config";
+import { DEFAULT_CACHE, TMDB_CACHE } from "@/lib/cache-config";
 
 export function useTrendingMovies(page: number = 1) {
   return useQuery<TrendingMoviesResponse, Error>({
@@ -36,6 +36,16 @@ export function useMovieVideos(movieId: number) {
     ...MEDIA_DETAILS_CACHE,
   });
 }
+
+
+export function useMovieGenres() {
+  return useQuery({
+    queryKey: ["movie-genres"],
+    queryFn: getMovieGenres,
+    ...TMDB_CACHE.VERY_LONG,
+  });
+}
+
 
 export function useMovieWatchProviders(movieId: number) {
   return useQuery({

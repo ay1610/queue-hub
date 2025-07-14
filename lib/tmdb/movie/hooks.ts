@@ -37,6 +37,7 @@ export function useMovieVideos(movieId: number) {
   });
 }
 
+
 export function useMovieGenres() {
   return useQuery({
     queryKey: ["movie-genres"],
@@ -44,6 +45,7 @@ export function useMovieGenres() {
     ...TMDB_CACHE.VERY_LONG,
   });
 }
+
 
 export function useMovieWatchProviders(movieId: number) {
   return useQuery({

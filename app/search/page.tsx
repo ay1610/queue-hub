@@ -49,7 +49,7 @@ function SearchPage() {
       </div>
 
       {data?.results?.length ? (
-        <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 justify-center")}> 
+        <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 justify-center")}>
           {data?.results.map((item) => {
             let mediaType: "movie" | "tv" | undefined;
             if (item.title) {

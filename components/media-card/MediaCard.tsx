@@ -6,6 +6,9 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { MediaRatingBadge } from "@/components/media-rating-badge/MediaRatingBadge";
 import { WatchLaterButton } from "../watch-later/WatchLaterButton";
+import { useMovieGenres } from "@/lib/tmdb/movie/hooks";
+import { useTVGenres } from "@/lib/tmdb/tv/hooks";
+import { getFilteredGenres } from "@/lib/media-utils";
 
 /**
  * MediaCardProps defines the props for the MediaCard component.
@@ -19,6 +22,8 @@ interface MediaCardProps {
     title?: string; // For movies
     first_air_date?: string; // For TV shows
     release_date?: string; // For movies
+    genres?: { id: number; name: string }[];
+    genre_ids?: number[];
   };
   type: "movie" | "tv" | "person"; // Specifies whether the media is a movie or TV show or person
   isInWatchLater?: boolean;
@@ -32,8 +37,26 @@ interface MediaCardProps {
  */
 export function MediaCard({ media, type, isInWatchLater = false }: MediaCardProps) {
   const mediaTitle = media.title || media.name;
-  const mediaDate = media.release_date || media.first_air_date;
+  const { data: movieGenreData } = useMovieGenres();
+  const { data: tvGenreData } = useTVGenres();
+  // Use getFilteredGenres for maintainable genre mapping
+  let mediaGenre = "Unknown Genre";
+  if (media.genre_ids?.length) {
+    const genreData =
+      type === "movie" ? movieGenreData : type === "tv" ? tvGenreData : undefined;
 
+    if (!genreData) {
+      mediaGenre = "Unknown Genre";
+    } else {
+      const mappedGenres = getFilteredGenres(
+        media.genre_ids.map((id) => ({ id, name: "" })),
+        genreData
+      );
+      mediaGenre = mappedGenres.length
+        ? mappedGenres.map((g) => g.name).join(", ")
+        : "Unknown Genre";
+    }
+  }
   return (
     <Link
       href={`/${type}/${media.id}`}
@@ -64,10 +87,10 @@ export function MediaCard({ media, type, isInWatchLater = false }: MediaCardProp
         </div>
         {type === "movie" || type === "tv" ? (
           <div className="absolute bottom-2 right-2 z-10">
-            <WatchLaterButton 
-              mediaId={media.id} 
-              mediaType={type} 
-              isInWatchLater={isInWatchLater} 
+            <WatchLaterButton
+              mediaId={media.id}
+              mediaType={type}
+              isInWatchLater={isInWatchLater}
               title={mediaTitle}
             />
           </div>
@@ -75,7 +98,7 @@ export function MediaCard({ media, type, isInWatchLater = false }: MediaCardProp
       </div>
       <div className={cn("text-center mt-2")} aria-label={`Media title and date for ${mediaTitle}`}>
         <div className="font-semibold text-base line-clamp-2">{mediaTitle}</div>
-        <div className="text-xs text-muted-foreground mt-1">{mediaDate}</div>
+        <div className="text-xs text-muted-foreground mt-1">{mediaGenre}</div>
       </div>
     </Link>
   );

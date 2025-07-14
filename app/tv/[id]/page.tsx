@@ -61,6 +61,7 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
     : undefined;
 
   const filteredGenres = getFilteredGenres(details.genres, tvGenres);
+  console.log("Filtered Genres:", filteredGenres);
 
   return (
     <MediaDetailPage

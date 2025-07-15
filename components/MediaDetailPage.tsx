@@ -3,7 +3,7 @@ import { MediaWhereToWatch } from "@/components/media-where-to-watch";
 import { MediaTrailerDialog } from "@/components/media-trailer-dialog";
 import Image from "next/image";
 import React from "react";
-import type { TMDBVideo } from "@/lib/tmdb/movie/videos";
+import type { TMDBVideo } from "@/lib/types/tmdb/videos";
 import type { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
 
 /**
@@ -28,6 +28,8 @@ export interface MediaDetailPageProps {
   voteAverage?: number;
   trailer?: TMDBVideo;
   usProviders?: WatchProvidersResponse["results"]["US"];
+  runtimeMins?: string;
+  type?: "movie" | "tv";
 }
 
 /**
@@ -44,6 +46,7 @@ export function MediaDetailPage({
   voteAverage,
   trailer,
   usProviders,
+  runtimeMins,
 }: MediaDetailPageProps) {
   return (
     <>
@@ -121,6 +124,7 @@ export function MediaDetailPage({
             </div>
             {/* Trailer Button - open dialog on click */}
             <MediaTrailerDialog trailer={trailer} />
+            <p className="text-sm text-gray-500 dark:text-gray-400">Runtime: {runtimeMins}</p>
           </div>
         </div>
       </div>

@@ -1,11 +1,17 @@
 "use client";
 
 import { MediaDetailPage } from "@/components/MediaDetailPage";
+import { useRuntimeData } from "@/lib/hooks/useRuntimeData";
 import { useMediaDetails } from "@/lib/media-details-hooks";
-import { useMovieVideos, useMovieWatchProviders } from "@/lib/tmdb/movie/hooks";
-import type { TMDBVideo } from "@/lib/tmdb/movie/videos";
+import {
+  useMovieVideos,
+  useMovieWatchProviders,
+  useMovieExternalIds,
+} from "@/lib/tmdb/movie/hooks";
+import type { TMDBVideo } from "@/lib/types/tmdb/videos";
 import type { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
 import { use } from "react";
+import { getFormattedRuntime } from "@/lib/media-utils";
 
 /**
  * MovieDetailPageWrapper - Displays detailed information for a movie, including genres, trailer, and watch providers.
@@ -32,18 +38,43 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
     isLoading: providersLoading,
     error: providersError,
   } = useMovieWatchProviders(movieId);
+  const {
+    data: externalIds,
+    isLoading: externalIdsLoading,
+    error: externalIdsError,
+  } = useMovieExternalIds(movieId);
 
+  const imdbId = externalIds?.imdb_id || null;
+  const {
+    data: runtimeData,
+    isLoading: runtimeLoading,
+    error: runtimeError,
+  } = useRuntimeData(imdbId);
+
+  const runtimeMins = runtimeData?.data?.runtime_minutes || null;
+  const formattedRuntime = getFormattedRuntime(runtimeMins);
   // Loading state
-  if (movieLoading || videosLoading || providersLoading) {
+  if (
+    movieLoading ||
+    videosLoading ||
+    providersLoading ||
+    externalIdsLoading ||
+    runtimeLoading ||
+    runtimeLoading
+  ) {
     return <div className="flex items-center justify-center h-64">Loading...</div>;
   }
 
   // Error state: combine all errors
-  if (movieError || videosError || providersError) {
+  if (movieError || videosError || providersError || externalIdsError || runtimeError) {
     return (
       <div className="text-red-500 text-center py-8">
         Error:{" "}
-        {movieError?.message || videosError?.message || providersError?.message || "Unknown error"}
+        {movieError?.message ||
+          videosError?.message ||
+          providersError?.message ||
+          externalIdsError?.message ||
+          "Unknown error"}
       </div>
     );
   }
@@ -62,6 +93,12 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
   const usProviders: WatchProvidersResponse["results"]["US"] | undefined =
     watchProvidersResp?.results?.US ?? undefined;
 
+  // Log external IDs for testing (temporary)
+  if (externalIds) {
+    console.log("External IDs:", externalIds);
+    console.log("IMDB ID:", externalIds.imdb_id);
+  }
+
   // Render main detail page
   return (
     <MediaDetailPage
@@ -74,6 +111,7 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
       voteAverage={typeof movie.vote_average === "number" ? movie.vote_average : 0}
       trailer={trailer}
       usProviders={usProviders}
+      runtimeMins={formattedRuntime}
     />
   );
 }

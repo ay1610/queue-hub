@@ -42,3 +42,19 @@ export function getUSProviders(providers?: WatchProvidersResponse):
     buy: rawProviders.buy as WatchProvider[],
   };
 }
+
+/**
+ * Converts runtime in minutes to a human-readable string (e.g., "2h 15m").
+ * Returns "N/A" for null or negative input.
+ *
+ * @param runtimeMins - The runtime in minutes (non-negative integer or null)
+ * @returns Formatted string in "Xh Ym", "Xh", "Ym", or "N/A" if input is invalid
+ */
+export function getFormattedRuntime(runtimeMins: number | null): string {
+  if (runtimeMins === null || runtimeMins < 0) return "N/A";
+  const hours = Math.floor(runtimeMins / 60);
+  const minutes = runtimeMins % 60;
+  if (hours === 0) return `${minutes}m`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h ${minutes}m`;
+}

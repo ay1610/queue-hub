@@ -72,13 +72,19 @@ model Verification {
   @@map("verification")
 }
 
-
 model WatchLater {
-  id         Int      @id @default(autoincrement())
-  userId     String  
-  mediaId    Int    
-  mediaType  String  
-  addedAt    DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  userId    String
+  mediaId   Int
+  mediaType String
+  addedAt   DateTime @default(now())
 
   @@unique([userId, mediaId, mediaType])
+}
+
+model runtime_data {
+  tconst          String  @id @db.VarChar(20)
+  title_type      String? @db.VarChar(20)
+  primary_title   String?
+  runtime_minutes Int?
 }

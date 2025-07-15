@@ -2,11 +2,12 @@
 
 import { MediaDetailPage } from "@/components/MediaDetailPage";
 import { useMediaDetails } from "@/lib/media-details-hooks";
-import { getFilteredGenres, getUSProviders } from "@/lib/media-utils";
+import { getFilteredGenres, getFormattedRuntime, getUSProviders } from "@/lib/media-utils";
 import { use } from "react";
-import { useTVGenres } from "@/lib/tmdb/tv/hooks";
+import { useTVExternalIds, useTVGenres } from "@/lib/tmdb/tv/hooks";
 import { useTVShowVideos } from "@/lib/tmdb/tv/hooks";
 import { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
+import { useRuntimeData } from "@/lib/hooks/useRuntimeData";
 
 /**
  * TVDetailPage - Displays detailed information for a TV show, including genres, trailer, and watch providers.
@@ -24,20 +25,49 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
     isLoading: detailsLoading,
     error: detailsError,
   } = useMediaDetails(tvId, "tv");
+
+  console.log("TVDetailPage - Tv details:", details);
   const {
     data: tvVideosResp,
     isLoading: videosLoading,
     error: videosError,
   } = useTVShowVideos(tvId);
 
-  if (!tvId || detailsLoading || genresLoading || videosLoading) {
+  const {
+    data: tvExternalIds,
+    isLoading: externalIdsLoading,
+    error: externalIdsError,
+  } = useTVExternalIds(tvId);
+  console.log("TVDetailPage - TV External IDs:", tvExternalIds);
+  const imdbId = tvExternalIds?.imdb_id || null;
+  const {
+    data: runtimeData,
+    isLoading: runtimeLoading,
+    error: runtimeError,
+  } = useRuntimeData(imdbId);
+
+  const runtimeMins = runtimeData?.data?.runtime_minutes || null;
+  const formattedRuntime = getFormattedRuntime(runtimeMins);
+  if (
+    !tvId ||
+    detailsLoading ||
+    genresLoading ||
+    videosLoading ||
+    externalIdsLoading ||
+    runtimeLoading
+  ) {
     return <div className="flex items-center justify-center h-64">Loading...</div>;
   }
 
-  if (detailsError || genresError || videosError) {
+  if (detailsError || genresError || videosError || externalIdsError || runtimeError) {
     return (
       <div className="text-red-500 text-center py-8">
-        Error: {detailsError?.message || genresError?.message || videosError?.message}
+        Error:{" "}
+        {detailsError?.message ||
+          genresError?.message ||
+          videosError?.message ||
+          externalIdsError?.message ||
+          runtimeError?.message}
       </div>
     );
   }
@@ -62,7 +92,6 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
 
   const filteredGenres = getFilteredGenres(details.genres, tvGenres);
 
-
   return (
     <MediaDetailPage
       title={title}
@@ -73,6 +102,7 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
       voteAverage={details.vote_average}
       trailer={trailer}
       usProviders={usProviders}
+      runtimeMins={formattedRuntime}
     />
   );
 }

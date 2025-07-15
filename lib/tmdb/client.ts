@@ -11,9 +11,9 @@ import type {
   TMDBTimeWindow,
   TMDBImageSize,
   TMDBBackdropSize,
-  TMDBAPIError,
   TMDBConfiguration,
 } from "./types";
+import type { TMDBAPIError } from "@/lib/types/tmdb/errors";
 
 class TMDBClient {
   private readonly baseURL = "https://api.themoviedb.org/3";

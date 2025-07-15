@@ -17,6 +17,7 @@ export function useTrendingMovies(page: number = 1) {
 import { getMovieDetails } from "./client";
 import { getMovieVideos } from "./videos";
 import { getMovieWatchProviders } from "./watchProviders";
+import { getMovieExternalIds } from "./externalIds";
 import { MEDIA_DETAILS_CACHE } from "@/lib/cache-config"; // Use if available
 
 export function useMovieDetails(movieId: number) {
@@ -37,7 +38,6 @@ export function useMovieVideos(movieId: number) {
   });
 }
 
-
 export function useMovieGenres() {
   return useQuery({
     queryKey: ["movie-genres"],
@@ -46,12 +46,20 @@ export function useMovieGenres() {
   });
 }
 
-
 export function useMovieWatchProviders(movieId: number) {
   return useQuery({
     queryKey: ["movie-watch-providers", movieId],
     queryFn: () => getMovieWatchProviders(movieId),
     enabled: !!movieId,
     ...MEDIA_DETAILS_CACHE,
+  });
+}
+
+export function useMovieExternalIds(movieId: number) {
+  return useQuery({
+    queryKey: ["movie-external-ids", movieId],
+    queryFn: () => getMovieExternalIds(movieId),
+    enabled: !!movieId,
+    ...TMDB_CACHE.VERY_LONG,
   });
 }

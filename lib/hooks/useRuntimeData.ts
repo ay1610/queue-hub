@@ -2,16 +2,13 @@
 
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import { TMDB_CACHE } from "../cache-config";
-import { getRuntimeData, RuntimeDataApiError } from "../runtime/client";
+import { getRuntimeData, RuntimeDataApiError } from "../api/client";
 import { RuntimeAPIResponse } from "../types";
 
-// Query key factory for runtime data functionality
 export const runtimeDataKeys = {
   all: ["runtime-data"] as const,
   detail: (imdbId: string) => [...runtimeDataKeys.all, imdbId] as const,
 } as const;
-
-// Reusable query options factory
 export function runtimeDataQueryOptions<TData = RuntimeAPIResponse>(
   imdbId: string | null | undefined,
   options?: Partial<UseQueryOptions<RuntimeAPIResponse, Error, TData>>
@@ -24,14 +21,12 @@ export function runtimeDataQueryOptions<TData = RuntimeAPIResponse>(
       }
       return getRuntimeData(imdbId);
     },
-    enabled: !!imdbId, // Only run query if IMDB ID is available
-    ...TMDB_CACHE.LONG, // Runtime data doesn't change often
+    enabled: !!imdbId,
+    ...TMDB_CACHE.LONG,
     retry: (failureCount, error) => {
-      // Don't retry for client errors (4xx status codes)
       if (error instanceof RuntimeDataApiError) {
         return error.status < 500 ? false : failureCount < 3;
       }
-      // For other errors, retry up to 3 times
       return failureCount < 3;
     },
     ...options,
@@ -67,11 +62,9 @@ export function useRuntimeData<TData = RuntimeAPIResponse>(
     enabled: !!imdbId,
     ...TMDB_CACHE.LONG,
     retry: (failureCount, error) => {
-      // Don't retry for client errors (4xx status codes)
       if (error instanceof RuntimeDataApiError) {
         return error.status < 500 ? false : failureCount < 3;
       }
-      // For other errors, retry up to 3 times
       return failureCount < 3;
     },
     ...options,

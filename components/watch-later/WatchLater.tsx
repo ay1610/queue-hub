@@ -3,24 +3,12 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useWatchLaterList } from "@/lib/watch-later-hooks";
+import type { WatchLaterMediaType } from "@/lib/types/watch-later";
 import { useWatchLaterMediaInfo } from "@/lib/watch-later-details-hooks";
-import { MediaDetails } from "@/lib/tmdb/types";
-import { TMDBMovie, TMDBTVShow } from "@/lib/types/tmdb";
-import { MediaCard } from "../media-card/MediaCard";
+import { WatchLaterList } from "./WatchLaterList";
+import { RecommendationsList } from "./RecommendationsList";
 
-/**
- * Type guard to check if media is a movie
- */
-function isMovie(media: MediaDetails): media is TMDBMovie {
-  return "title" in media;
-}
-
-/**
- * Type guard to check if media is a TV show
- */
-function isTVShow(media: MediaDetails): media is TMDBTVShow {
-  return "name" in media;
-}
+import { useRecommendations } from "@/lib/hooks/useRecommendations";
 
 export default function WatchLater() {
   // Get the basic watch later list (IDs and media types)
@@ -34,49 +22,47 @@ export default function WatchLater() {
   // Each result contains detailed information about the media item
   const watchLaterDetails = useWatchLaterMediaInfo(watchLaterData?.data || []);
 
-
+  // Fetch recommendations using custom hook
+  const {
+    data: recommendationsData,
+    isLoading: isRecommendationsLoading,
+    error: recommendationsError,
+  } = useRecommendations();
+  const recommendationsDetails = useWatchLaterMediaInfo(
+    (recommendationsData?.recommendations || []).map((rec) => ({
+      mediaType: rec.mediaType as WatchLaterMediaType,
+      mediaId: rec.mediaId,
+    }))
+  );
   // Implement your UI here, using the data from the hooks
   return (
-    <Card className={cn("w-full max-w-2xl mx-auto mt-10")}>
+    <Card className={cn("w-3/4 mx-auto mt-10")}>
+      {/* Recommendations Section */}
+      <CardHeader>
+        <h2 className="font-semibold text-xl" data-slot="card-title">
+          Recommendations
+        </h2>
+      </CardHeader>
+      <CardContent>
+        <RecommendationsList
+          isLoading={isRecommendationsLoading}
+          error={recommendationsError}
+          recommendations={recommendationsData?.recommendations || []}
+          details={recommendationsDetails}
+        />
+      </CardContent>
       <CardHeader>
         <h1 className="font-semibold text-2xl" data-slot="card-title">
           Watch List
         </h1>
       </CardHeader>
       <CardContent>
-        {isWatchLaterLoading && <p>Loading your watch list...</p>}
-        {watchLaterError && <p>Error loading watch list</p>}
-        {!isWatchLaterLoading &&
-          !watchLaterError &&
-          (!watchLaterData || watchLaterData.data.length === 0) && <p>Your watch list is empty</p>}
-        {!isWatchLaterLoading &&
-          !watchLaterError &&
-          watchLaterData &&
-          watchLaterData.data.length > 0 && (
-            <>
-              <p>Found {watchLaterData.data.length} items in your watch list</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 justify-center">
-                {watchLaterData?.data.map((item, index) => {
-                  const details = watchLaterDetails[index];
-
-                  // Skip rendering if details aren't loaded yet
-                  if (!details?.data) return null;
-
-                  return (
-                    <div key={`${item.mediaType}-${item.mediaId}`}>
-                      {isMovie(details.data) ? (
-                        <MediaCard media={details.data} type="movie" isInWatchLater={true} />
-                      ) : (
-                        isTVShow(details.data) && (
-                          <MediaCard media={details.data} type="tv" isInWatchLater={true} />
-                        )
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          )}
+        <WatchLaterList
+          isLoading={isWatchLaterLoading}
+          error={watchLaterError}
+          data={watchLaterData?.data}
+          details={watchLaterDetails}
+        />
       </CardContent>
     </Card>
   );

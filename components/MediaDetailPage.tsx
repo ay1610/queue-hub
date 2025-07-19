@@ -2,6 +2,7 @@ import { MediaBackdrop } from "@/components/MediaBackdrop";
 import { MediaWhereToWatch } from "@/components/media-where-to-watch";
 import { MediaTrailerDialog } from "@/components/media-trailer-dialog";
 import Image from "next/image";
+import { RecommendFeature } from "@/components/recommend/RecommendFeature";
 import React from "react";
 import type { TMDBVideo } from "@/lib/types/tmdb/videos";
 import type { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
@@ -19,6 +20,7 @@ import type { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
  * @property usProviders - US watch providers object.
  */
 export interface MediaDetailPageProps {
+  id?: number;
   title: string;
   tagline?: string;
   overview?: string;
@@ -37,6 +39,7 @@ export interface MediaDetailPageProps {
  * Receives all display data as props.
  */
 export function MediaDetailPage({
+  id,
   title,
   tagline,
   overview,
@@ -47,6 +50,7 @@ export function MediaDetailPage({
   trailer,
   usProviders,
   runtimeMins,
+  type,
 }: MediaDetailPageProps) {
   return (
     <>
@@ -122,8 +126,12 @@ export function MediaDetailPage({
                 </span>
               )}
             </div>
-            {/* Trailer Button - open dialog on click */}
-            <MediaTrailerDialog trailer={trailer} />
+            <div className="flex items-center gap-2 mb-4">
+              <MediaTrailerDialog trailer={trailer} />
+              {/* TODO: Implement Watch Later Button */}
+              {/* <WatchLaterButton mediaId={mediaId} mediaType={mediaType} isInWatchLater={isInWatchLater} /> */}
+              <RecommendFeature mediaId={id} mediaType={type} mediaTitle={title} />
+            </div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Runtime: {runtimeMins}</p>
           </div>
         </div>

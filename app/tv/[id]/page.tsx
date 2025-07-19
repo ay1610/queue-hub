@@ -94,6 +94,8 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
 
   return (
     <MediaDetailPage
+      id={tvId}
+      type="tv"
       title={title}
       overview={details.overview}
       backdropPath={details.backdrop_path}

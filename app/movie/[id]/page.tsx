@@ -95,14 +95,16 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
 
   // Log external IDs for testing (temporary)
   if (externalIds) {
-    console.log("External IDs:", externalIds);
+    console.log("External IDs:");
     console.log("IMDB ID:", externalIds.imdb_id);
   }
 
   // Render main detail page
   return (
     <MediaDetailPage
+      id={movieId}
       title={movie.title ?? "Untitled"}
+      type="movie"
       tagline={movie.tagline ?? ""}
       overview={movie.overview ?? ""}
       backdropPath={movie.backdrop_path ?? ""}

@@ -88,3 +88,15 @@ model runtime_data {
   primary_title   String?
   runtime_minutes Int?
 }
+
+model Recommendation {
+  id         Int      @id @default(autoincrement())
+  fromUserId String   @db.VarChar
+  toUserId   String   @db.VarChar
+  mediaId    Int
+  mediaType  String   @db.VarChar
+  message    String
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+
+  @@unique([fromUserId, toUserId, mediaId, mediaType], map: "unique_recommendation")
+}

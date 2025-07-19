@@ -110,4 +110,4 @@ export type MediaDetails = {
     }
 );
 
-export type { TMDBVideo } from "./movie/videos";
+export type { TMDBVideo } from "../types/tmdb/videos";

@@ -20,7 +20,7 @@ export async function GET() {
     recs.map(async (rec) => {
       const user = await prisma.user.findUnique({
         where: { id: rec.fromUserId },
-        select: { name: true, image: true  },
+        select: { name: true, image: true },
       });
       return {
         ...rec,

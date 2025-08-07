@@ -3,6 +3,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer utilities {
+  .media-card-image-rotate {
+    transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  }
+  /* Remove all box-shadows from media card image and its children */
+  .media-card-image-rotate,
+  .media-card-image-rotate * {
+    box-shadow: none !important;
+    background: transparent !important;
+    backface-visibility: hidden !important;
+    will-change: transform;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

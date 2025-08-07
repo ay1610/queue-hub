@@ -60,7 +60,7 @@ export default function Navbar() {
           <Link href="/trending/movies" className="font-medium ml-4">
             Trending Movies
           </Link>
-          <Link href="/trending/tv" className="font-medium ml-2">
+          <Link href="/trending/tv-server" className="font-medium ml-2">
             Trending TV
           </Link>
           <Link href="/watch-list" className="font-medium ml-2">

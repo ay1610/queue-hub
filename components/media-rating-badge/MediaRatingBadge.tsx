@@ -13,7 +13,7 @@ export interface MediaRatingBadgeProps {
   /**
    * Optional: aria-label for accessibility.
    */
-  label?: string;
+  votes?: number | null;
   /**
    * Optional: size of the badge ('sm' | 'md' | 'lg'). Default is 'md'.
    */
@@ -36,19 +36,32 @@ const sizeMap = {
   lg: { sizeClasses: "w-24 h-24 text-4xl", paddingClasses: "" },
 };
 
+const getGradient = (rating: number) => {
+  if (rating >= 9) return "bg-gradient-to-r from-emerald-400 to-emerald-700"; // Excellent
+  if (rating >= 8) return "bg-gradient-to-r from-lime-300 to-lime-600"; // Very Good
+  if (rating >= 7) return "bg-gradient-to-r from-yellow-300 to-amber-500"; // Good
+  if (rating >= 5) return "bg-gradient-to-r from-orange-400 to-orange-700"; // Average
+  if (rating > 0) return "bg-gradient-to-r from-red-400 to-red-700"; // Poor
+  return "bg-gradient-to-r from-gray-300 to-gray-500"; // No rating
+};
+
 /**
  * MediaRatingBadge displays a circular, color-coded badge for a media rating out of 10.
  * Green: ≥7, Yellow: 4–6.9, Red: <4.
  */
-export function MediaRatingBadge({ voteAverage, label, size = "md" }: MediaRatingBadgeProps) {
+export function MediaRatingBadge({ voteAverage, votes = 0, size = "md" }: MediaRatingBadgeProps) {
   const rating = voteAverage || 0;
+  const label = votes === 0
+    ? `Rating: ${rating.toFixed(1)} / 10`
+    : `IMDB Rating: ${rating.toFixed(1)} / 10 with ${votes} votes`;
   const { ratingColor, textColor } = getRatingClasses(rating);
+  const gradient = getGradient(rating);
   const { sizeClasses, paddingClasses } = sizeMap[size] || sizeMap.md;
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span
+        {/* <span
           className={cn(
             "flex items-center justify-center rounded-full font-bold shadow-lg border-4 border-white",
             ratingColor,
@@ -59,9 +72,14 @@ export function MediaRatingBadge({ voteAverage, label, size = "md" }: MediaRatin
           aria-label={`${label || "Audience Score"}: ${rating.toFixed(1)}`}
         >
           {rating.toFixed(1)}
-        </span>
+        </span> */}
+        <div
+          className={`inline-flex items-center text-white text-sm font-bold px-3 py-1 rounded-md ${gradient}`}
+        >
+          <span className="mr-1">★</span> {rating.toFixed(1)}
+        </div>
       </TooltipTrigger>
-      <TooltipContent>{`${label || "Audience Score"}: ${rating.toFixed(1)}`}</TooltipContent>
+      <TooltipContent>{label}</TooltipContent>
     </Tooltip>
   );
 }

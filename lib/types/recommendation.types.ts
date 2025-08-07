@@ -7,6 +7,8 @@ export type Recommendation = {
   mediaType: string;
   message: string;
   createdAt: string;
+  fromUsername?: string | null;
+  fromUserImage?: string | null;
 };
 
 export type RecommendationsResponse = {
@@ -22,5 +24,8 @@ export type ShareRecommendationInput = {
 
 export type ShareRecommendationResponse = {
   success: boolean;
-  recommendation: Recommendation;
+  recommendation: Pick<
+    Recommendation,
+    "id" | "fromUserId" | "toUserId" | "mediaId" | "mediaType" | "message"
+  >;
 };

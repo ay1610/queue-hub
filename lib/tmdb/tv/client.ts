@@ -46,7 +46,6 @@ export async function getPopularTVShows(page: number = 1): Promise<PopularTVShow
  */
 export async function getTrendingTVShows(page: number = 1): Promise<PopularTVShowsResponse> {
   validatePageNumber(page);
-
   return withTVErrorHandling(
     "fetch trending TV shows",
     { page, endpoint: "/trending/tv/week" },

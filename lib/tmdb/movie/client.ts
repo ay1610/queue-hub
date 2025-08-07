@@ -1,3 +1,19 @@
+import { validateMovieId, withMovieErrorHandling } from "../error-handling";
+import type { TMDBTVExternalIds } from "@/lib/types/tmdb";
+/**
+ * Fetches external service IDs for a specific movie.
+ * Returns identifiers used by other services like IMDb, Facebook, Twitter, etc.
+ * @param id - The TMDB movie ID
+ * @returns Promise resolving to object containing external service IDs
+ */
+export async function getMovieExternalIds(id: number): Promise<TMDBTVExternalIds> {
+  validateMovieId(id);
+  return withMovieErrorHandling(
+    "fetch movie external IDs",
+    { movieId: id, endpoint: `/movie/${id}/external_ids` },
+    () => tmdbFetcher<TMDBTVExternalIds>(`/movie/${id}/external_ids`)
+  );
+}
 // TMDB Movie API client
 import { tmdbFetcher } from "../fetcher";
 import type { TrendingMoviesResponse, TMDBMovie, TMDBGenre } from "@/lib/types/tmdb";

@@ -18,7 +18,7 @@ export function Banner({ children, className = "" }: BannerProps) {
   return (
     <div
       role="status"
-      className={`w-full rounded-md px-4 py-2 mb-4 font-medium border border-border bg-muted text-muted-foreground shadow-sm transition-colors ${className}`}
+      className={`w-full rounded-md px-4 py-2 mb-4 font-medium border border-gray-200 bg-muted text-muted-foreground shadow-sm transition-colors ${className}`}
     >
       {children}
     </div>

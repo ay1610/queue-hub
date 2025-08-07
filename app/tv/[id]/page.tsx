@@ -8,6 +8,7 @@ import { useTVExternalIds, useTVGenres } from "@/lib/tmdb/tv/hooks";
 import { useTVShowVideos } from "@/lib/tmdb/tv/hooks";
 import { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
 import { useRuntimeData } from "@/lib/hooks/useRuntimeData";
+import { useIMDBRating } from "@/lib/hooks/useIMDBRating";
 
 /**
  * TVDetailPage - Displays detailed information for a TV show, including genres, trailer, and watch providers.
@@ -38,13 +39,22 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
     isLoading: externalIdsLoading,
     error: externalIdsError,
   } = useTVExternalIds(tvId);
-  console.log("TVDetailPage - TV External IDs:", tvExternalIds);
-  const imdbId = tvExternalIds?.imdb_id || null;
+
+  const imdbId = tvExternalIds?.imdb_id;
   const {
     data: runtimeData,
     isLoading: runtimeLoading,
     error: runtimeError,
-  } = useRuntimeData(imdbId);
+  } = useRuntimeData(imdbId, { enabled: !!imdbId });
+
+  const {
+    data: imdbRating,
+    isLoading: imdbRatingLoading,
+    error: imdbRatingError,
+  } = useIMDBRating(imdbId, { enabled: !!imdbId });
+
+  const imdbRatingNumber = imdbRating?.data?.average_rating ?? undefined;
+  const imdbVotes = imdbRating?.data?.num_votes ?? undefined;
 
   const runtimeMins = runtimeData?.data?.runtime_minutes || null;
   const formattedRuntime = getFormattedRuntime(runtimeMins);
@@ -54,6 +64,7 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
     genresLoading ||
     videosLoading ||
     externalIdsLoading ||
+    imdbRatingLoading ||
     runtimeLoading
   ) {
     return <div className="flex items-center justify-center h-64">Loading...</div>;
@@ -67,6 +78,7 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
           genresError?.message ||
           videosError?.message ||
           externalIdsError?.message ||
+          imdbRatingError?.message ||
           runtimeError?.message}
       </div>
     );
@@ -105,6 +117,8 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
       trailer={trailer}
       usProviders={usProviders}
       runtimeMins={formattedRuntime}
+      imdbRating={imdbRatingNumber}
+      imdbVotes={imdbVotes}
     />
   );
 }

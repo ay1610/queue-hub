@@ -1,10 +1,33 @@
 "use client";
 
-// React hooks for TMDB Movie API
-import { useQuery } from "@tanstack/react-query";
-import { getTrendingMovies, getMovieGenres } from "./client";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { getTrendingMovies, getMovieGenres, getMovieDetails } from "./client";
+import { getMovieVideos } from "./videos";
+import { getMovieWatchProviders } from "./watchProviders";
+import { getMovieExternalIds } from "./externalIds";
 import type { TrendingMoviesResponse } from "@/lib/types/tmdb";
-import { DEFAULT_CACHE, TMDB_CACHE } from "@/lib/cache-config";
+import { DEFAULT_CACHE, TMDB_CACHE, MEDIA_DETAILS_CACHE } from "@/lib/cache-config";
+
+/**
+ * Infinite query hook for trending movies (for infinite scroll UI)
+ * Uses TanStack Query's useInfiniteQuery for paginated fetching.
+ */
+export function useInfiniteTrendingMovies() {
+  return useInfiniteQuery<TrendingMoviesResponse, Error>({
+    queryKey: ["trending-movies-infinite"],
+    queryFn: async ({ pageParam = 1 }) => getTrendingMovies(Number(pageParam)),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      // TMDB API: lastPage.total_pages, lastPage.page
+      if (lastPage.page < lastPage.total_pages) {
+        return lastPage.page + 1;
+      }
+      return undefined;
+    },
+    ...DEFAULT_CACHE,
+  });
+}
+// React hooks for TMDB Movie API
 
 export function useTrendingMovies(page: number = 1) {
   return useQuery<TrendingMoviesResponse, Error>({
@@ -13,12 +36,6 @@ export function useTrendingMovies(page: number = 1) {
     ...DEFAULT_CACHE,
   });
 }
-
-import { getMovieDetails } from "./client";
-import { getMovieVideos } from "./videos";
-import { getMovieWatchProviders } from "./watchProviders";
-import { getMovieExternalIds } from "./externalIds";
-import { MEDIA_DETAILS_CACHE } from "@/lib/cache-config"; // Use if available
 
 export function useMovieDetails(movieId: number) {
   return useQuery({

@@ -14,7 +14,22 @@ export async function GET() {
     where: { toUserId: session.user.id },
     orderBy: { createdAt: "desc" },
   });
-  return NextResponse.json({ recommendations: recs });
+
+  // Fetch user info for each recommendation
+  const recommendations = await Promise.all(
+    recs.map(async (rec) => {
+      const user = await prisma.user.findUnique({
+        where: { id: rec.fromUserId },
+        select: { name: true, image: true },
+      });
+      return {
+        ...rec,
+        fromUsername: user?.name ?? "Unknown User",
+        fromUserImage: user?.image ?? null,
+      };
+    })
+  );
+  return NextResponse.json({ recommendations });
 }
 
 // POST /api/recommendation

@@ -9,6 +9,7 @@ import { WatchLaterButton } from "../watch-later/WatchLaterButton";
 import { useMovieGenres } from "@/lib/tmdb/movie/hooks";
 import { useTVGenres } from "@/lib/tmdb/tv/hooks";
 import { getFilteredGenres } from "@/lib/media-utils";
+import type { TMDBTVExternalIds } from "@/lib/types/tmdb";
 
 /**
  * MediaCardProps defines the props for the MediaCard component.
@@ -25,22 +26,41 @@ interface MediaCardProps {
     genres?: { id: number; name: string }[];
     genre_ids?: number[];
   };
-  type: "movie" | "tv" | "person"; // Specifies whether the media is a movie or TV show or person
+  type: "movie" | "tv" | "person";
   isInWatchLater?: boolean;
   size?: "small" | "default";
+  imdbRating?: number;
+  imdbVotes?: number;
+  runtimeMins?: number | null;
+  externalIds?: TMDBTVExternalIds;
+  runtime?: {
+    tconst: string;
+    title_type: string | null;
+    primary_title: string | null;
+    runtime_minutes: number | null;
+  };
+  rating?: {
+    tconst: string;
+    averageRating: number | null;
+    numVotes: number | null;
+  };
 }
 
 /**
  * MediaCard displays a single media item (movie or TV show) with its poster and details.
  * Links to the media detail page.
  * @param media - The media object containing details.
- * @param type - The type of media ("movie" or "tv"). It also includes person
+ * @param type - The type of media ("movie" or "tv").
  */
 export function MediaCard({
   media,
   type,
   isInWatchLater = false,
   size = "default",
+  imdbRating,
+  runtimeMins,
+  runtime,
+  rating,
 }: MediaCardProps) {
   const mediaTitle = media.title || media.name;
   const { data: movieGenreData } = useMovieGenres();
@@ -72,13 +92,22 @@ export function MediaCard({
         : "Unknown Genre";
     }
   }
-
   // Card size classes
-  const cardSize = size === "small" ? "p-1 w-full max-w-[120px]" : "p-2 w-full max-w-[180px]";
+  const cardSize = size === "small" ? "p-1 w-full max-w-[120px]" : "p-2 w-full";
   const posterSize =
     size === "small"
-      ? { width: 120, height: 180, className: "rounded mb-1 w-full h-auto aspect-[2/3]" }
-      : { width: 180, height: 270, className: "rounded mb-2 w-full h-auto aspect-[2/3]" };
+      ? {
+          width: 120,
+          height: 180,
+          className: "rounded mb-1 w-full h-auto aspect-[2/3]",
+          tmdbSize: "w500",
+        }
+      : {
+          width: 500,
+          height: 700,
+          className: "rounded mb-2 w-full h-auto aspect-[2/3]",
+          tmdbSize: "w780",
+        };
   const titleSize = size === "small" ? "text-xs" : "text-base";
   const genreSize = size === "small" ? "text-[10px]" : "text-xs";
 
@@ -86,32 +115,40 @@ export function MediaCard({
     <Link
       href={`/${type}/${media.id}`}
       className={cn(
-        `bg-white dark:bg-zinc-900 rounded shadow flex flex-col items-center relative hover:ring-2 hover:ring-primary transition-all duration-150 ${cardSize}`
+        `rounded shadow flex flex-col items-center relative hover:ring-2 hover:ring-primary transition-all duration-150 ${cardSize}`
       )}
       aria-label={`Media card for ${mediaTitle}`}
       prefetch={false}
     >
       <div className="relative w-full flex justify-center">
-        {media.poster_path ? (
-          <Image
-            src={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
-            alt={`Poster for ${mediaTitle}`}
-            width={posterSize.width}
-            height={posterSize.height}
-            className={cn(posterSize.className)}
-          />
-        ) : (
-          <div
-            className={cn(
-              "w-full h-24 bg-gray-200 flex items-center justify-center text-gray-500",
-              size === "small" ? "h-24" : "h-40"
-            )}
-          >
-            <span className={cn("block text-xs text-gray-400")}>No Image</span>
-          </div>
-        )}
+        <div className="w-full">
+          {media.poster_path ? (
+            <Image
+              src={`https://image.tmdb.org/t/p/${posterSize.tmdbSize}${media.poster_path}`}
+              alt={`Poster for ${mediaTitle}`}
+              width={posterSize.width}
+              height={posterSize.height}
+              className={posterSize.className}
+              priority={false}
+              draggable={false}
+            />
+          ) : (
+            <div
+              className={cn(
+                posterSize.className,
+                "bg-gray-800 flex items-center justify-center text-gray-400"
+              )}
+            >
+              No Image
+            </div>
+          )}
+        </div>
         <div className="absolute bottom-2 left-2 z-10">
-          <MediaRatingBadge voteAverage={media.vote_average} size="sm" />
+          <MediaRatingBadge
+            voteAverage={rating?.averageRating ?? media.vote_average}
+            votes={rating?.numVotes ?? 0}
+            size="sm"
+          />
         </div>
         {type === "movie" || type === "tv" ? (
           <div className="absolute bottom-2 right-2 z-10">
@@ -130,6 +167,18 @@ export function MediaCard({
       >
         <div className={cn("font-semibold line-clamp-2", titleSize)}>{mediaTitle}</div>
         <div className={cn("text-muted-foreground mt-1", genreSize)}>{mediaGenre}</div>
+        {/* Extra info: IMDB rating, votes, runtime */}
+        {(imdbRating || runtimeMins || rating || runtime) && (
+          <div
+            className={cn("flex flex-col items-center mt-1 gap-0.5")}
+            aria-label="IMDB and runtime info"
+          >
+            {/* Prefer runtime prop if present, fallback to runtimeMins */}
+            {runtime?.runtime_minutes && (
+              <span className="text-xs text-gray-500">{runtime.runtime_minutes} min</span>
+            )}
+          </div>
+        )}
       </div>
     </Link>
   );

@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
@@ -87,6 +88,13 @@ model runtime_data {
   title_type      String? @db.VarChar(20)
   primary_title   String?
   runtime_minutes Int?
+}
+
+
+model title_ratings {
+  tconst         String   @id @db.VarChar(20)
+  average_rating Float?
+  num_votes      Int?
 }
 
 model Recommendation {

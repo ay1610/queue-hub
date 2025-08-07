@@ -1,10 +1,30 @@
 "use client";
 
 // React hooks for TMDB TV API
-import { useQuery } from "@tanstack/react-query";
 import { getTrendingTVShows, getTVGenres, getTVShowExternalIds, getTVShowVideos } from "./client";
 import type { TMDBVideosResponse, TrendingTVShowsResponse } from "@/lib/types/tmdb";
 import { DEFAULT_CACHE, TMDB_CACHE } from "@/lib/cache-config";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+
+/**
+ * Infinite query hook for trending TV shows (for infinite scroll UI)
+ * Uses TanStack Query's useInfiniteQuery for paginated fetching.
+ */
+export function useInfiniteTrendingTVShows() {
+  return useInfiniteQuery<TrendingTVShowsResponse, Error>({
+    queryKey: ["trending-tv-shows-infinite"],
+    queryFn: async ({ pageParam = 1 }) => getTrendingTVShows(Number(pageParam)),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      // TMDB API: lastPage.total_pages, lastPage.page
+      if (lastPage.page < lastPage.total_pages) {
+        return lastPage.page + 1;
+      }
+      return undefined;
+    },
+    ...DEFAULT_CACHE,
+  });
+}
 
 /**
  * Gets TV shows that are currently popular and trending.

@@ -121,7 +121,6 @@ export function TrendingMoviesClient(): JSX.Element {
                   }}
                 >
                   <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 w-full p-2")}>
-                    {" "}
                     {/* Responsive grid */}
                     {allMovies.slice(rowStart, rowEnd).map((movie) => {
                       const isInWatchLater = watchLaterLookup[`${movie.id}-movie`] || false;

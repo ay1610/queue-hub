@@ -12,6 +12,8 @@ import Link from "next/link";
 import { z } from "zod";
 
 import React, { useEffect } from "react";
+import { createAvatar } from "@dicebear/core";
+import { botttsNeutral } from "@dicebear/collection";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -52,11 +54,21 @@ function Page() {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { name, email, password } = values;
+    // Generate DiceBear avatar SVG data URI using JS library
+    const avatarSvg = createAvatar(botttsNeutral, {
+      seed: name,
+      backgroundColor: ["b6e3f4", "00acc1", "d1d4f9", "039be5"],
+      backgroundType: ["gradientLinear"],
+      eyes: ["bulging", "dizzy", "eva", "happy", "hearts", "glow"],
+      size: 120,
+      radius: 20,
+    }).toDataUri();
     const { error } = await authClient.signUp.email(
       {
         email,
         password,
         name,
+        image: avatarSvg,
         callbackURL: "/sign-in",
       },
       {

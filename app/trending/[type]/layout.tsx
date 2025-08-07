@@ -20,12 +20,12 @@ export default function TrendingTypeLayout({
         ? "Trending Shows"
         : "Trending";
   return (
-    <main className="relative max-w-5xl xl:max-w-4xl 2xl:max-w-3xl mx-auto px-0 py-8 min-h-screen">
+    <div className="relative min-h-screen">
       <GridBg />
-      <h1 className="text-4xl font-bold mb-8 relative z-10 mx-8 sm:mx-12 md:mx-20 lg:mx-32">
-        {heading}
-      </h1>
-      <div className="relative z-10 mx-8 sm:mx-12 md:mx-20 lg:mx-32">{children}</div>
-    </main>
+      <div className="relative z-10">
+        <h1 className="text-3xl font-bold mb-6 text-center text-white drop-shadow-lg">{heading}</h1>
+        {children}
+      </div>
+    </div>
   );
 }

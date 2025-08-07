@@ -6,6 +6,7 @@ import { RecommendFeature } from "@/components/recommend/RecommendFeature";
 import React from "react";
 import type { TMDBVideo } from "@/lib/types/tmdb/videos";
 import type { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
+import { MediaRatingBadge } from "./media-rating-badge";
 
 /**
  * Props for MediaDetailPage, generic for both movies and TV shows.
@@ -32,6 +33,8 @@ export interface MediaDetailPageProps {
   usProviders?: WatchProvidersResponse["results"]["US"];
   runtimeMins?: string;
   type?: "movie" | "tv";
+  imdbRating?: number; // Optional IMDB rating
+  imdbVotes?: number; // Optional IMDB votes
 }
 
 /**
@@ -51,6 +54,8 @@ export function MediaDetailPage({
   usProviders,
   runtimeMins,
   type,
+  imdbRating,
+  imdbVotes,
 }: MediaDetailPageProps) {
   return (
     <>
@@ -85,9 +90,11 @@ export function MediaDetailPage({
               </p>
             )}
             <div className="flex items-center gap-4 mb-4">
-              <span className="bg-yellow-400 text-black font-bold px-3 py-1 rounded-full text-lg shadow">
+              {/* <span className="bg-yellow-400 text-black font-bold px-3 py-1 rounded-full text-lg shadow">
                 {voteAverage?.toFixed(1)}
-              </span>
+              </span> */}
+              {imdbRating && <MediaRatingBadge voteAverage={imdbRating} votes={imdbVotes} />}
+
               {genres && genres.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {genres.map((genre) => (

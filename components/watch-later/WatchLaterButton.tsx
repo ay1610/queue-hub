@@ -6,6 +6,7 @@ import { Plus, Check } from "lucide-react";
 import { useWatchLaterMutation } from "@/lib/watch-later-hooks";
 import { WatchLaterMediaType } from "@/lib/types/watch-later";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface WatchLaterButtonProps {
   mediaId: number;
@@ -71,9 +72,9 @@ export function WatchLaterButton({
       disabled={watchLaterMutation.isPending}
       variant="outline"
       size="icon"
-      className={className}
+      className={cn("w-6 h-6 p-1", className)}
     >
-      {isInWatchLaterState ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+      {isInWatchLaterState ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
     </Button>
   );
 }

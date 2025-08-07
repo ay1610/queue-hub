@@ -60,7 +60,7 @@ export class RuntimeDataService {
   async getRuntimeData(rawImdbId: string): Promise<RuntimeDataResult> {
     const imdbId = this.validateImdbId(rawImdbId);
 
-    const runtimeData = await this.prisma.runtime_data.findFirst({
+    const runtimeData = await this.prisma.runtime_data.findUnique({
       where: {
         tconst: imdbId,
       },

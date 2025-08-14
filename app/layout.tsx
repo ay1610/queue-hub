@@ -8,6 +8,9 @@ import { GridBg } from "@/components/GridBg";
 export const metadata: Metadata = {
   title: "Queue Hub",
   description: "Your smart, self-hosted watchlist and movie info hub.",
+  icons: {
+    icon: "/book-marked.svg",
+  },
 };
 
 export default async function RootLayout({

@@ -60,6 +60,31 @@ export class RuntimeDataService {
   async getRuntimeData(rawImdbId: string): Promise<RuntimeDataResult> {
     const imdbId = this.validateImdbId(rawImdbId);
 
+    const USE_MOCK_DATA = process.env.DEV_USE_MOCK === "true";
+    if (USE_MOCK_DATA) {
+      if (imdbId === "tt1234567") {
+        return {
+          tconst: imdbId,
+          title_type: "movie",
+          primary_title: "Mock Movie Title",
+          runtime_minutes: 120,
+        };
+      } else {
+        return {
+          tconst: imdbId,
+          title_type: null,
+          primary_title: null,
+          runtime_minutes: null,
+          message: "No runtime found (mock)",
+        } as RuntimeDataResult & { message: string };
+      }
+    }
+
+    if (!this.prisma) {
+      throw new Error(
+        "Prisma client is not available. Check DEV_USE_MOCK and database connection."
+      );
+    }
     const runtimeData = await this.prisma.runtime_data.findUnique({
       where: {
         tconst: imdbId,

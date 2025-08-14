@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import { useWindowVirtualizer } from "@tanstack/react-virtual";
+import React, { useEffect, useMemo } from "react";
+// import { useWindowVirtualizer } from "@tanstack/react-virtual";
+import { useGridVirtualization } from "@/components/media/useGridVirtualization";
 import type { JSX } from "react";
-import { cn, getRandomItems } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useInfiniteTrendingMovies } from "@/lib/tmdb/movie/hooks";
 import { useWatchLaterLookup } from "@/lib/watch-later-hooks";
-import { useBatchExternalIds } from "@/components/media/useBatchExternalIds";
-import { useBatchRuntime } from "@/components/media/useBatchRuntime";
-import { useBatchRatings } from "@/components/media/useBatchRatings";
-import { useAggregatedMediaData } from "@/components/media/useAggregatedMediaData";
+import { useAggregatedMediaDataBatch } from "@/components/media/useAggregatedMediaDataBatch";
+import { useHeroItem } from "@/components/media/useHeroItem";
 import { MovieHero } from "./MovieHero";
 import type { TMDBMovie } from "@/lib/types/tmdb";
 import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
@@ -27,43 +26,21 @@ export function TrendingMoviesClient(): JSX.Element {
   // Combine all movies from all pages
   const allMovies: TMDBMovie[] = data?.pages.flatMap((page) => page.results) ?? [];
 
-  // Step 1: Fetch all external IDs for visible movies in a single batch (media-agnostic)
-  const tmdbIds = allMovies.map((movie) => movie.id);
-  const { data: externalIdsBatch } = useBatchExternalIds("movie", tmdbIds);
-  const imdbIds = (externalIdsBatch ?? [])
-    .map((ext: { imdb_id?: string | null }) => ext?.imdb_id)
-    .filter((id: string | null | undefined): id is string => !!id);
-  const { data: runtimeBatch } = useBatchRuntime(imdbIds);
-  const { data: ratingBatch } = useBatchRatings(imdbIds);
-  const movieDataMap = useAggregatedMediaData(
-    allMovies,
-    externalIdsBatch,
-    runtimeBatch,
-    ratingBatch
-  );
+  // Use new hook for data aggregation
+  const { showDataMap: movieDataMap } = useAggregatedMediaDataBatch("movie", allMovies);
 
-  // Pick a hero movie from the first page
-  const [heroMovie, setHeroMovie] = useState<TMDBMovie | null>(null);
-  useEffect(() => {
-    if (data?.pages?.[0]?.results?.length && !heroMovie) {
-      const firstPageMovies = data.pages[0].results;
-      const [randomMovie] = getRandomItems(firstPageMovies, 1);
-      setHeroMovie(randomMovie);
-    }
-  }, [data, heroMovie]);
+  // Use new hook for hero movie selection
+  const heroMovie = useHeroItem(data?.pages?.[0]?.results ?? []);
 
   // Virtualizer setup (declare only once)
   // Grid virtualization: virtualize rows, each with up to 4 cards
   const CARDS_PER_ROW = 4;
-  const ROW_HEIGHT = 700; // fallback estimate, but will use dynamic measurement
-  const rowCount = useMemo(() => Math.ceil(allMovies.length / CARDS_PER_ROW), [allMovies.length]);
-  const virtualizer = useWindowVirtualizer({
-    count: rowCount,
-    estimateSize: () => ROW_HEIGHT,
-    overscan: 6,
-    // measureElement is handled by ref below
+  const ROW_HEIGHT = 700;
+  const { virtualizer, virtualRows, rowCount } = useGridVirtualization({
+    media: allMovies,
+    cardsPerRow: CARDS_PER_ROW,
+    rowHeight: ROW_HEIGHT,
   });
-  const virtualRows = virtualizer.getVirtualItems();
 
   // Infinite scroll: prefetch next page when 5 rows from the end
   useEffect(() => {
@@ -113,6 +90,7 @@ export function TrendingMoviesClient(): JSX.Element {
               return (
                 <div
                   key={virtualRow.index}
+                  data-index={virtualRow.index}
                   ref={(el) => virtualizer.measureElement(el)}
                   className="absolute top-0 left-0 w-full flex justify-center"
                   style={{

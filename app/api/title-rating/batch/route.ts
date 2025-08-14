@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
 
+const USE_MOCK_DATA = process.env.DEV_USE_MOCK === "true";
+
 interface ApiBatchSuccessResponse<T> {
   data: T[];
   timestamp: string;
@@ -13,6 +15,11 @@ interface TitleRatingResult {
   averageRating: number | null;
   numVotes: number | null;
 }
+
+const mockRatings: TitleRatingResult[] = [
+  { tconst: "tt1234567", averageRating: 8.5, numVotes: 12345 },
+  { tconst: "tt7654321", averageRating: 7.2, numVotes: 5432 },
+];
 
 export async function POST(request: NextRequest) {
   const start = Date.now();
@@ -46,10 +53,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (USE_MOCK_DATA) {
+      const results: TitleRatingResult[] = imdbIds.map((id: string) => {
+        const found = mockRatings.find((r) => r.tconst === id);
+        return found || { tconst: id, averageRating: null, numVotes: null };
+      });
+      return NextResponse.json<ApiBatchSuccessResponse<TitleRatingResult>>(
+        { data: results, timestamp },
+        { status: 200 }
+      );
+    }
+
     // Fetch ratings for each ID in parallel, preserving order
     const results: TitleRatingResult[] = await Promise.all(
       imdbIds.map(async (id: string) => {
         try {
+          if (!prisma) {
+            throw new Error(
+              "Prisma client is not available. Check DEV_USE_MOCK and database connection."
+            );
+          }
           const rating = await prisma.title_ratings.findUnique({ where: { tconst: id } });
           if (!rating) {
             return { tconst: id, averageRating: null, numVotes: null };

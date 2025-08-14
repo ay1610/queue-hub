@@ -1,29 +1,32 @@
 import { PrismaClient } from "../lib/generated/prisma";
 
-declare  global {
+declare global {
   let prisma: PrismaClient | undefined;
 }
 
-const prismaClientSingleton = () => {
-try {
-  if (process.env.NODE_ENV !== "production") {
-    console.log("Initializing PrismaClient...");
-  }
-  return new PrismaClient();
-  } catch (error) {
-    console.error("Failed to initialize PrismaClient:", error);
-    throw error;
-  }
-};
+const USE_MOCK_DATA = process.env.DEV_USE_MOCK === "true";
 
-declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
-} & typeof global;
+let prisma: PrismaClient | undefined = undefined;
 
-const prisma = globalThis.prismaGlobal || prismaClientSingleton();
+if (!USE_MOCK_DATA) {
+  const prismaClientSingleton = () => {
+    try {
+      if (process.env.NODE_ENV !== "production") {
+        console.log("Initializing PrismaClient...");
+      }
+      return new PrismaClient();
+    } catch (error) {
+      console.error("Failed to initialize PrismaClient:", error);
+      throw error;
+    }
+  };
 
-// const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+  declare const globalThis: {
+    prismaGlobal: ReturnType<typeof prismaClientSingleton>;
+  } & typeof global;
+
+  prisma = globalThis.prismaGlobal || prismaClientSingleton();
+  if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+}
 
 export default prisma;
-
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;

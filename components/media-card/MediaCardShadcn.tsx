@@ -126,6 +126,7 @@ export function MediaCardShadcn({
                   src={`https://image.tmdb.org/t/p/${posterSize.tmdbSize}${media.poster_path}`}
                   alt={`Poster for ${mediaTitle}`}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
                   className={cn("object-cover w-full h-full rounded-lg aspect-[2/3]")}
                 />
               ) : (

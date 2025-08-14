@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
 
+const USE_MOCK_DATA = process.env.DEV_USE_MOCK === "true";
+
 interface ApiErrorResponse {
   error: string;
   code: string;
@@ -13,6 +15,12 @@ interface ApiSuccessResponse<T> {
   data: T;
   timestamp: string;
 }
+
+const mockRating = {
+  tconst: "tt1234567",
+  averageRating: 8.5,
+  numVotes: 12345,
+};
 
 export async function GET(request: NextRequest) {
   const timestamp = new Date().toISOString();
@@ -46,7 +54,30 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (USE_MOCK_DATA) {
+      if (imdbId === mockRating.tconst) {
+        return NextResponse.json<ApiSuccessResponse<typeof mockRating>>(
+          { data: mockRating, timestamp },
+          { status: 200 }
+        );
+      } else {
+        return NextResponse.json<ApiErrorResponse>(
+          {
+            error: `No rating found for IMDB ID: ${imdbId}`,
+            code: "RATING_NOT_FOUND",
+            timestamp,
+          },
+          { status: 404 }
+        );
+      }
+    }
+
     // Query the title_ratings table
+    if (!prisma) {
+      throw new Error(
+        "Prisma client is not available. Check DEV_USE_MOCK and database connection."
+      );
+    }
     const rating = await prisma.title_ratings.findUnique({
       where: { tconst: imdbId },
     });

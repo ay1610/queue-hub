@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { RecommendButton } from "./RecommendButton";
 import { RecommendDialog } from "./RecommendDialog";
 import { useShareRecommendation } from "@/lib/hooks/useRecommendations";
-
+import { toast } from "sonner";
 interface RecommendFeatureProps {
   mediaId: number | undefined;
   mediaType: "movie" | "tv" | undefined;
@@ -20,12 +20,27 @@ export function RecommendFeature({ mediaId, mediaType, mediaTitle }: RecommendFe
     // await recommend({ mediaId, mediaType, toUserId, message });
     console.log(toUserId, message, mediaId, mediaType);
     if (!mediaId || !mediaType || !message) return;
-    shareRecommendation.mutate({
-      mediaId,
-      mediaType,
-      toUserId,
-      message,
-    });
+    shareRecommendation.mutate(
+      {
+        mediaId,
+        mediaType,
+        toUserId,
+        message,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Recommendation sent!");
+        },
+        onError: (error) => {
+          if (error?.message === "Already recommended") {
+            toast.error("You have already recommended this.");
+          } else {
+            toast.error("Failed to send recommendation");
+          }
+          console.error("Error recommending:", error);
+        },
+      }
+    );
   };
 
   return (

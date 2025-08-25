@@ -1,6 +1,7 @@
 import type { TMDBTVExternalIds } from "@/lib/types/tmdb";
 import type { RuntimeDataResult } from "./useBatchRuntime";
 import type { TitleRatingResult } from "./useBatchRatings";
+import { useSetMediaDataMap } from "./useMediaDataStore";
 
 export function useAggregatedMediaData(
   allMedia: { id: number }[],
@@ -8,6 +9,7 @@ export function useAggregatedMediaData(
   runtimeBatch: RuntimeDataResult[] | undefined,
   ratingBatch: TitleRatingResult[] | undefined
 ) {
+  const setMediaDataMap = useSetMediaDataMap();
   // Build lookup maps for runtime and rating batches for O(1) access
   const runtimeMap = runtimeBatch
     ? runtimeBatch.reduce<Record<string, RuntimeDataResult>>((acc, r) => {
@@ -42,5 +44,6 @@ export function useAggregatedMediaData(
       rating,
     });
   });
+  setMediaDataMap(mediaDataMap);
   return mediaDataMap;
 }

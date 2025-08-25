@@ -31,7 +31,7 @@ export function RecommendDialog({
   mediaTitle,
   onSubmit,
 }: RecommendDialogProps) {
-  const { data, isLoading, error } = useUsers();
+  const { data: userData, isLoading, error } = useUsers();
   const [submitting, setSubmitting] = React.useState(false);
   console.log("RecommendDialog rendered", { open, mediaId, mediaType, mediaTitle });
   const form = useForm<RecommendFormValues>({
@@ -67,7 +67,7 @@ export function RecommendDialog({
                   <Combobox
                     className="w-full"
                     options={
-                      data?.users.map((user) => ({
+                      userData?.users.map((user) => ({
                         value: user.id,
                         label: user.name || user.email || "",
                       })) || []

@@ -64,7 +64,7 @@ export function MediaDetailPage({
         {backdropPath && (
           <MediaBackdrop src={`https://image.tmdb.org/t/p/original${backdropPath}`} alt={title} />
         )}
-        <div className="relative z-10 flex flex-col md:flex-row gap-8 max-w-4xl mx-auto px-4 pt-16 md:pt-48 pb-12">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-start gap-8 max-w-4xl mx-auto px-4 pt-16 md:pt-48 pb-12">
           {/* Poster */}
           {posterPath && (
             <div className="w-40 md:w-56 shrink-0 shadow-xl rounded-lg overflow-hidden border-2 border-white dark:border-zinc-800 bg-white dark:bg-zinc-900">

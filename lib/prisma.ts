@@ -1,29 +1,17 @@
-import { PrismaClient } from "../lib/generated/prisma";
+import { PrismaClient } from "@prisma/client";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
-declare  global {
-  let prisma: PrismaClient | undefined;
+declare global {
+  // Use var to allow reassignment in development
+  // eslint-disable-next-line no-var
+  var prismaGlobal: PrismaClient | undefined;
 }
 
-const prismaClientSingleton = () => {
-try {
-  if (process.env.NODE_ENV !== "production") {
-    console.log("Initializing PrismaClient...");
-  }
-  return new PrismaClient();
-  } catch (error) {
-    console.error("Failed to initialize PrismaClient:", error);
-    throw error;
-  }
-};
+// Always extend PrismaClient with withAccelerate for consistent typing
+const prisma = global.prismaGlobal || new PrismaClient().$extends(withAccelerate());
 
-declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
-} & typeof global;
-
-const prisma = globalThis.prismaGlobal || prismaClientSingleton();
-
-// const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+if (process.env.NODE_ENV !== "production") {
+  global.prismaGlobal = prisma;
+}
 
 export default prisma;
-
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;

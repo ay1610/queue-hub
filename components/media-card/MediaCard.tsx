@@ -147,7 +147,6 @@ export function MediaCard({
           <MediaRatingBadge
             voteAverage={rating?.averageRating ?? media.vote_average}
             votes={rating?.numVotes ?? 0}
-            size="sm"
           />
         </div>
         {type === "movie" || type === "tv" ? (

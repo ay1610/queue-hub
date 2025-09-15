@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 /**
@@ -30,11 +30,7 @@ export function getRatingClasses(rating: number) {
 }
 
 // Helper to get size classes
-const sizeMap = {
-  sm: { sizeClasses: "w-7 h-7 text-xs", paddingClasses: "px-1 py-1 my-1" },
-  md: { sizeClasses: "w-16 h-16 text-2xl", paddingClasses: "" },
-  lg: { sizeClasses: "w-24 h-24 text-4xl", paddingClasses: "" },
-};
+// Removed unused sizeMap
 
 const getGradient = (rating: number) => {
   if (rating >= 9) return "bg-gradient-to-r from-emerald-400 to-emerald-700"; // Excellent
@@ -49,14 +45,12 @@ const getGradient = (rating: number) => {
  * MediaRatingBadge displays a circular, color-coded badge for a media rating out of 10.
  * Green: ≥7, Yellow: 4–6.9, Red: <4.
  */
-export function MediaRatingBadge({ voteAverage, votes = 0, size = "md" }: MediaRatingBadgeProps) {
+export function MediaRatingBadge({ voteAverage, votes = 0 }: Omit<MediaRatingBadgeProps, "size">) {
   const rating = voteAverage || 0;
   const label = votes === 0
     ? `Rating: ${rating.toFixed(1)} / 10`
     : `IMDB Rating: ${rating.toFixed(1)} / 10 with ${votes} votes`;
-  const { ratingColor, textColor } = getRatingClasses(rating);
   const gradient = getGradient(rating);
-  const { sizeClasses, paddingClasses } = sizeMap[size] || sizeMap.md;
 
   return (
     <Tooltip>

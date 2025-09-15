@@ -65,10 +65,7 @@ export default function Navbar() {
           </Link>
           <Link href="/watch-list" className="font-medium ml-2">
             Watch List
-          </Link>
-          <Link href="/test" className="font-medium ml-4">
-            Test
-          </Link>
+          </Link>  
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggleButton />

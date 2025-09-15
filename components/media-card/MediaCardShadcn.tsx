@@ -145,7 +145,6 @@ export function MediaCardShadcn({
               <MediaRatingBadge
                 voteAverage={rating?.averageRating ?? imdbRating ?? media.vote_average}
                 votes={rating?.numVotes ?? imdbVotes ?? 0}
-                size="sm"
               />
               {(type === "movie" || type === "tv") && (
                 <WatchLaterButton

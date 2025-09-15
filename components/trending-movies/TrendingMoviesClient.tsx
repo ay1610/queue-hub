@@ -19,6 +19,7 @@ import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
  * then displays a hero section for a random movie followed by a grid of trending movie cards.
  */
 export function TrendingMoviesClient(): JSX.Element {
+  const [heroMovie, setHeroMovie] = useState<TMDBMovie | null>(null);
   // Infinite query for trending movies
   const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteTrendingMovies();
@@ -42,8 +43,6 @@ export function TrendingMoviesClient(): JSX.Element {
     ratingBatch
   );
 
-  // Pick a hero movie from the first page
-  const [heroMovie, setHeroMovie] = useState<TMDBMovie | null>(null);
   useEffect(() => {
     if (data?.pages?.[0]?.results?.length && !heroMovie) {
       const firstPageMovies = data.pages[0].results;

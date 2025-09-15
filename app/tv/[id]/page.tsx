@@ -113,7 +113,6 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
       backdropPath={details.backdrop_path}
       posterPath={details.poster_path || ""}
       genres={filteredGenres}
-      voteAverage={details.vote_average}
       trailer={trailer}
       usProviders={usProviders}
       runtimeMins={formattedRuntime}

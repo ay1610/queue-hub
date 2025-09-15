@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+
+type Recommendation = {
+  id: number;
+  fromUserId: string;
+  toUserId: string;
+  mediaId: number;
+  mediaType: string;
+  message: string;
+  createdAt: Date;
+};
 
 // GET /api/recommendation
 export async function GET() {
@@ -17,7 +28,7 @@ export async function GET() {
 
   // Fetch user info for each recommendation
   const recommendations = await Promise.all(
-    recs.map(async (rec) => {
+    recs.map(async (rec: Recommendation) => {
       const user = await prisma.user.findUnique({
         where: { id: rec.fromUserId },
         select: { name: true, image: true },

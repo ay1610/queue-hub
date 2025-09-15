@@ -1,6 +1,6 @@
 import React from "react";
 import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
-import { MediaCard } from "../media-card/MediaCard";
+// import { MediaCard } from "../media-card/MediaCard";
 import { MediaDetails } from "@/lib/tmdb/types";
 import { TMDBMovie, TMDBTVShow } from "@/lib/types/tmdb";
 import { useWatchLaterLookup } from "@/lib/watch-later-hooks";

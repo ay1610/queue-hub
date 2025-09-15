@@ -28,7 +28,7 @@ export interface MediaDetailPageProps {
   backdropPath?: string | null;
   posterPath?: string | null;
   genres?: { id: number; name: string }[];
-  voteAverage?: number;
+  // voteAverage?: number; // Removed unused prop
   trailer?: TMDBVideo;
   usProviders?: WatchProvidersResponse["results"]["US"];
   runtimeMins?: string;
@@ -49,7 +49,7 @@ export function MediaDetailPage({
   backdropPath,
   posterPath,
   genres,
-  voteAverage,
+  // voteAverage,
   trailer,
   usProviders,
   runtimeMins,

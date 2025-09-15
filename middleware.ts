@@ -17,8 +17,6 @@ export function middleware(request: NextRequest) {
   const isPreflight = request.method === "OPTIONS";
 
   // Debug logs
-  console.log("process.env.NEXT_PUBLIC_AUTH_URL", process.env.NEXT_PUBLIC_AUTH_URL);
-  console.log("process.env.NODE_ENV", process.env.NODE_ENV, process.env);
   console.log("allowedOrigins", allowedOrigins);
   console.log("[CORS] Request origin:", origin);
   console.log("[CORS] Allowed origins:", allowedOrigins);

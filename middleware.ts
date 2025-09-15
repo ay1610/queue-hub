@@ -13,7 +13,8 @@ const corsOptions = {
 
 export function middleware(request: NextRequest) {
   const origin = request.headers.get("origin") ?? "";
-  const isAllowedOrigin = allowedOrigins.includes(origin);
+  const isAllowedOrigin =
+    allowedOrigins.includes(origin) || (origin.includes("vercel.app") && origin.includes("queue"));
   const isPreflight = request.method === "OPTIONS";
 
   // Debug logs

@@ -27,7 +27,10 @@ export function middleware(request: NextRequest) {
   if (isPreflight) {
     console.log("[CORS] Handling preflight request");
     const preflightHeaders = {
-      ...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
+      ...(isAllowedOrigin && {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Credentials": "true",
+      }),
       ...corsOptions,
     };
     console.log("[CORS] Preflight headers:", preflightHeaders);
@@ -38,6 +41,7 @@ export function middleware(request: NextRequest) {
   if (isAllowedOrigin) {
     console.log("[CORS] Setting Access-Control-Allow-Origin header for:", origin);
     response.headers.set("Access-Control-Allow-Origin", origin);
+    response.headers.set("Access-Control-Allow-Credentials", "true");
   }
   Object.entries(corsOptions).forEach(([key, value]) => {
     response.headers.set(key, value);

@@ -12,4 +12,5 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
   },
+  trustedOrigins: [process.env.NEXT_PUBLIC_AUTH_URL || "http://localhost:3000"],
 });

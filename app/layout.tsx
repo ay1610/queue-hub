@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
 import { GridBg } from "@/components/GridBg";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const metadata: Metadata = {
   title: "Queue Hub",
@@ -19,6 +20,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="relative min-h-screen">
         <Providers>
+          <ReactQueryDevtools initialIsOpen={false} />
           <Navbar />
           <GridBg />
           <div className="relative z-10">{children}</div>

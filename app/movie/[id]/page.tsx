@@ -110,7 +110,6 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
       backdropPath={movie.backdrop_path ?? ""}
       posterPath={movie.poster_path ?? ""}
       genres={Array.isArray(movie.genres) ? movie.genres : []}
-      voteAverage={typeof movie.vote_average === "number" ? movie.vote_average : 0}
       trailer={trailer}
       usProviders={usProviders}
       runtimeMins={formattedRuntime}

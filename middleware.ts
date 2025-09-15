@@ -16,16 +16,28 @@ export function middleware(request: NextRequest) {
   const isAllowedOrigin = allowedOrigins.includes(origin);
   const isPreflight = request.method === "OPTIONS";
 
+  // Debug logs
+  console.log("process.env.NEXT_PUBLIC_AUTH_URL", process.env.NEXT_PUBLIC_AUTH_URL);
+  console.log("process.env.NODE_ENV", process.env.NODE_ENV, process.env);
+  console.log("allowedOrigins", allowedOrigins);
+  console.log("[CORS] Request origin:", origin);
+  console.log("[CORS] Allowed origins:", allowedOrigins);
+  console.log("[CORS] isAllowedOrigin:", isAllowedOrigin);
+  console.log("[CORS] Request method:", request.method);
+
   if (isPreflight) {
+    console.log("[CORS] Handling preflight request");
     const preflightHeaders = {
       ...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
       ...corsOptions,
     };
+    console.log("[CORS] Preflight headers:", preflightHeaders);
     return NextResponse.json({}, { headers: preflightHeaders });
   }
 
   const response = NextResponse.next();
   if (isAllowedOrigin) {
+    console.log("[CORS] Setting Access-Control-Allow-Origin header for:", origin);
     response.headers.set("Access-Control-Allow-Origin", origin);
   }
   Object.entries(corsOptions).forEach(([key, value]) => {

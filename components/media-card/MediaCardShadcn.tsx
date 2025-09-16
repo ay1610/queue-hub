@@ -78,17 +78,17 @@ export function MediaCardShadcn({
   const posterSize =
     size === "small"
       ? {
-          width: 160,
-          height: 240,
-          className: "rounded-lg mb-1 w-full h-auto aspect-[2/3]",
-          tmdbSize: "w500",
-        }
+        width: 160,
+        height: 240,
+        className: "rounded-lg mb-1 w-full h-auto aspect-[2/3]",
+        tmdbSize: "w500",
+      }
       : {
-          width: 340,
-          height: 510,
-          className: "rounded-lg mb-2 w-full h-auto aspect-[2/3]",
-          tmdbSize: "w780",
-        };
+        width: 340,
+        height: 510,
+        className: "rounded-lg mb-2 w-full h-auto aspect-[2/3]",
+        tmdbSize: "w780",
+      };
   const titleSize = size === "small" ? "text-xs" : "text-sm";
   const genreSize = size === "small" ? "text-[10px]" : "text-xs";
 

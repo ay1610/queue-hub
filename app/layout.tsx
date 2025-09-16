@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Image from "next/image";
 import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
@@ -27,6 +28,16 @@ export default async function RootLayout({
           <div className="relative z-10">{children}</div>
           <Analytics />
           <Toaster />
+          <footer
+            className="w-full mt-8 py-4 px-4 flex flex-col items-center text-xs sm:text-sm border-t border-sky-200 dark:border-sky-800 bg-slate-50 dark:bg-[#0d253f]"
+          >
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-center sm:text-left">
+              <Image src="/tmdb_logo.svg" alt="TMDB Logo" height={24} width={24} className="h-6 w-6 flex-shrink-0" />
+              <span className="text-slate-700 dark:text-white drop-shadow-sm">
+                This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.
+              </span>
+            </div>
+          </footer>
         </Providers>
       </body>
     </html>

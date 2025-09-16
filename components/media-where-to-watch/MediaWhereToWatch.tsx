@@ -26,7 +26,6 @@ export function MediaWhereToWatch({ usProviders }: MediaWhereToWatchProps) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 mt-16 mb-12">
-      <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Where to Watch</h2>
       <Table>
         <TableHeader>
           <TableRow>

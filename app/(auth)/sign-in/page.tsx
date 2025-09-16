@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
+import { Banner } from "@/components/ui/banner";
 import Link from "next/link";
 import { z } from "zod";
 
@@ -21,8 +22,10 @@ import { signInFormSchema } from "@/lib/auth-schema";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Lock, Copy } from "lucide-react";
 
 function Page() {
+  const showDemo = process.env.NODE_ENV !== "production";
   // 1. Define your form.
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
@@ -31,6 +34,27 @@ function Page() {
       password: "",
     },
   });
+
+  const demoEmail = "demo@example.com";
+  const demoPassword = "demo1234";
+
+  function handleDemoButton() {
+    form.setValue("email", demoEmail, { shouldDirty: true });
+    form.setValue("password", demoPassword, { shouldDirty: true });
+    toast.success("Demo credentials applied", { duration: 2000 });
+    setTimeout(() => {
+      onSubmit({ email: demoEmail, password: demoPassword });
+    }, 1000);
+  }
+
+  async function handleCopy(value: string, label: string) {
+    try {
+      await navigator.clipboard.writeText(value);
+      toast.success(`${label} copied`, { duration: 1500 });
+    } catch {
+      toast.error("Copy failed");
+    }
+  }
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signInFormSchema>) {
@@ -93,7 +117,49 @@ function Page() {
   }
   return (
     <>
+
       <Card className={cn("w-full max-w-md mx-auto")}>
+        {showDemo && (
+          <div className="px-4 pt-4">
+            <Banner className="text-sm rounded-lg p-3 bg-white/95 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 shadow-sm">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <Lock className="h-5 w-5 text-slate-500 dark:text-slate-300" aria-hidden />
+                  <span className="font-medium text-slate-800 dark:text-slate-100">Try the demo account</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-600 dark:text-slate-300">Email</span>
+                  <code className="font-mono text-sm px-2 py-1 rounded bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100">{demoEmail}</code>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(demoEmail, "Email")}
+                    aria-label="Copy demo email"
+                    className="p-1 rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+                  >
+                    <Copy className="h-4 w-4" aria-hidden />
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-600 dark:text-slate-300">Password</span>
+                  <code className="font-mono text-sm px-2 py-1 rounded bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100">{demoPassword}</code>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(demoPassword, "Password")}
+                    aria-label="Copy demo password"
+                    className="p-1 rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+                  >
+                    <Copy className="h-4 w-4" aria-hidden />
+                  </button>
+                </div>
+                <div className="flex justify-end">
+                  <Button type="button" size="sm" onClick={handleDemoButton} aria-label="Fill demo credentials">
+                    Use demo
+                  </Button>
+                </div>
+              </div>
+            </Banner>
+          </div>
+        )}
         <CardHeader>
           <h1 className="font-semibold" data-slot="card-title">
             Sign In

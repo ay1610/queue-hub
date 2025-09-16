@@ -7,6 +7,7 @@ import { Providers } from "@/components/providers";
 import { GridBg } from "@/components/GridBg";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "Queue Hub",
@@ -27,6 +28,7 @@ export default async function RootLayout({
           <GridBg />
           <div className="relative z-10">{children}</div>
           <Analytics />
+          <SpeedInsights />
           <Toaster />
           <footer
             className="w-full mt-8 py-4 px-4 flex flex-col items-center text-xs sm:text-sm border-t border-sky-200 dark:border-sky-800 bg-slate-50 dark:bg-[#0d253f]"

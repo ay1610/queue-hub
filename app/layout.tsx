@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
 import { GridBg } from "@/components/GridBg";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Queue Hub",
@@ -24,6 +25,7 @@ export default async function RootLayout({
           <Navbar />
           <GridBg />
           <div className="relative z-10">{children}</div>
+          <Analytics />
           <Toaster />
         </Providers>
       </body>

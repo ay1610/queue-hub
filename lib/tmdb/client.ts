@@ -58,10 +58,6 @@ class TMDBClient {
       });
     }
 
-    if (process.env.NODE_ENV === "development") {
-      console.log(`TMDB API Request: GET ${url.toString()}`);
-    }
-
     const response = await fetch(url.toString(), {
       method: "GET",
       headers: this.getHeaders(),

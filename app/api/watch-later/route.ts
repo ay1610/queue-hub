@@ -20,7 +20,6 @@ export async function GET() {
         addedAt: "desc",
       },
     });
-    console.log("watchlater items", watchLaterItems.length);
     return NextResponse.json({
       success: true,
       data: watchLaterItems,

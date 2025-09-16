@@ -17,7 +17,6 @@ export async function getWatchLaterList(): Promise<WatchLaterItem[]> {
       return [];
     }
     const data = await response.json();
-    console.log(data);
     return data.data || [];
   } catch (error) {
     console.error("Error fetching watch-later list:", error);

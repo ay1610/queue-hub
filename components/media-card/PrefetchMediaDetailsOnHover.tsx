@@ -43,11 +43,9 @@ export function PrefetchMediaDetailsOnHover({
         try {
           if (mediaType === "movie") {
             const movieDetails = await getMovieDetails(mediaId, "watch/providers");
-            console.log("[Prefetch] movie details fetched", { mediaId, movieDetails });
             return { ...movieDetails, type: "movie" };
           } else {
             const tvDetails = await getTVShowDetails(mediaId, "watch/providers");
-            console.log("[Prefetch] tv details fetched", { mediaId, tvDetails });
             return { ...tvDetails, type: "tv" };
           }
         } catch (e) {

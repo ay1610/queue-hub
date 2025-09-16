@@ -11,14 +11,10 @@ interface RecommendFeatureProps {
 
 export function RecommendFeature({ mediaId, mediaType, mediaTitle }: RecommendFeatureProps) {
   const [open, setOpen] = useState(false);
-  console.log("first", mediaId, mediaType, mediaTitle);
   const shareRecommendation = useShareRecommendation();
 
   // Internal submit handler
   const handleRecommendSubmit = async (toUserId: string, message: string) => {
-    // TODO: Call your recommend API/hook here
-    // await recommend({ mediaId, mediaType, toUserId, message });
-    console.log(toUserId, message, mediaId, mediaType);
     if (!mediaId || !mediaType || !message) return;
     shareRecommendation.mutate(
       {

@@ -13,6 +13,7 @@ import { useAggregatedMediaData } from "@/components/media/useAggregatedMediaDat
 import { MovieHero } from "./MovieHero";
 import type { TMDBMovie } from "@/lib/types/tmdb";
 import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
+import { TVShowSkeleton } from "../trending-tvshows/TVShowSkeleton";
 
 /**
  * Client-side component that fetches trending movies and watch later list using React Query,
@@ -76,11 +77,7 @@ export function TrendingMoviesClient(): JSX.Element {
   }, [virtualRows, hasNextPage, isFetchingNextPage, fetchNextPage, rowCount]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-lg">Loading trending movies...</div>
-      </div>
-    );
+    return <TVShowSkeleton />;
   }
 
   if (error) {

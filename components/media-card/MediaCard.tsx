@@ -79,7 +79,6 @@ export function MediaCard({
   let mediaGenre = "Unknown Genre";
   if (derivedGenreIds?.length) {
     const genreData = type === "movie" ? movieGenreData : type === "tv" ? tvGenreData : undefined;
-    // console.log("genreData", genreData); // Remove console.log for production
     if (!genreData) {
       mediaGenre = "Unknown Genre";
     } else {
@@ -97,17 +96,17 @@ export function MediaCard({
   const posterSize =
     size === "small"
       ? {
-          width: 120,
-          height: 180,
-          className: "rounded mb-1 w-full h-auto aspect-[2/3]",
-          tmdbSize: "w500",
-        }
+        width: 120,
+        height: 180,
+        className: "rounded mb-1 w-full h-auto aspect-[2/3]",
+        tmdbSize: "w500",
+      }
       : {
-          width: 500,
-          height: 700,
-          className: "rounded mb-2 w-full h-auto aspect-[2/3]",
-          tmdbSize: "w780",
-        };
+        width: 500,
+        height: 700,
+        className: "rounded mb-2 w-full h-auto aspect-[2/3]",
+        tmdbSize: "w780",
+      };
   const titleSize = size === "small" ? "text-xs" : "text-base";
   const genreSize = size === "small" ? "text-[10px]" : "text-xs";
 

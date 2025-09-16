@@ -93,11 +93,6 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
   const usProviders: WatchProvidersResponse["results"]["US"] | undefined =
     watchProvidersResp?.results?.US ?? undefined;
 
-  // Log external IDs for testing (temporary)
-  if (externalIds) {
-    console.log("External IDs:");
-    console.log("IMDB ID:", externalIds.imdb_id);
-  }
 
   // Render main detail page
   return (

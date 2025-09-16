@@ -27,7 +27,6 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
     error: detailsError,
   } = useMediaDetails(tvId, "tv");
 
-  console.log("TVDetailPage - Tv details:", details);
   const {
     data: tvVideosResp,
     isLoading: videosLoading,

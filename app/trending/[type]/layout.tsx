@@ -1,3 +1,4 @@
+
 import React from "react";
 import { GridBg } from "@/components/GridBg";
 
@@ -6,17 +7,18 @@ import { GridBg } from "@/components/GridBg";
  * Provides a consistent wrapper and heading for trending content.
  * Dynamically displays 'Trending Movies' or 'Trending Shows' based on the route segment.
  */
-export default function TrendingTypeLayout({
+export default async function TrendingTypeLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { type: string };
+  params: { type: string } | Promise<{ type: string }>;
 }) {
+  const resolvedParams = await Promise.resolve(params);
   const heading =
-    params.type === "movies"
+    resolvedParams.type === "movies"
       ? "Trending Movies"
-      : params.type === "tv"
+      : resolvedParams.type === "tv"
         ? "Trending Shows"
         : "Trending";
   return (

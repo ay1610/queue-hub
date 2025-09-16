@@ -1,5 +1,8 @@
 import { createAuthClient } from "better-auth/react";
+
+// Use NEXT_PUBLIC_AUTH_URL for production (Vercel), fallback to localhost for local development
 export const authClient = createAuthClient({
-    /** The base URL of the server (optional if you're using the same domain) */
-    baseURL: "http://localhost:3000"
+  baseURL: process.env.NEXT_PUBLIC_AUTH_URL || "http://localhost:3000",
 });
+
+export const { signIn, signOut, useSession } = authClient;

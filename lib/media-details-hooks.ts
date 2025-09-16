@@ -59,7 +59,6 @@ export function useMediaDetails<TData = MediaDetails>(
     if (mediaType === "movie") {
       const movieDetails = await getMovieDetails(mediaId, "watch/providers");
       const usProviders = movieDetails.watchProviders?.results?.US;
-      console.log("Movie watchProviders response:", movieDetails.watchProviders);
       return {
         ...movieDetails,
         type: "movie",
@@ -68,7 +67,6 @@ export function useMediaDetails<TData = MediaDetails>(
     } else {
       const tvDetails = await getTVShowDetails(mediaId, "watch/providers");
       const usProviders = tvDetails.watchProviders?.results?.US;
-      console.log("TV watchProviders response:", tvDetails.watchProviders);
       return {
         ...tvDetails,
         type: "tv",

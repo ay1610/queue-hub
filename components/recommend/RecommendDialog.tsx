@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useUsers } from "@/lib/hooks/useUsers";
@@ -26,14 +25,10 @@ type RecommendFormValues = z.infer<typeof recommendSchema>;
 export function RecommendDialog({
   open,
   onOpenChange,
-  mediaId,
-  mediaType,
   mediaTitle,
   onSubmit,
 }: RecommendDialogProps) {
   const { data: userData, isLoading, error } = useUsers();
-  const [submitting, setSubmitting] = React.useState(false);
-  console.log("RecommendDialog rendered", { open, mediaId, mediaType, mediaTitle });
   const form = useForm<RecommendFormValues>({
     resolver: zodResolver(recommendSchema),
     defaultValues: {
@@ -43,9 +38,7 @@ export function RecommendDialog({
   });
 
   const handleFormSubmit = async (values: RecommendFormValues) => {
-    setSubmitting(true);
     await onSubmit(values.toUserId, values.message ?? "");
-    setSubmitting(false);
     onOpenChange(false);
     form.reset();
   };
@@ -113,8 +106,8 @@ export function RecommendDialog({
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={submitting}>
-              {submitting ? "Sending..." : "Send Recommendation"}
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? "Sending..." : "Send Recommendation"}
             </Button>
           </div>
         </form>

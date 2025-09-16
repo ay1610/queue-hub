@@ -96,7 +96,7 @@ export function TrendingTVShowsClient(): JSX.Element {
   return (
     <>
       {heroShow && <TVShowHero show={heroShow} />}
-      <section className={cn("w-[85vw] mt-8 mx-auto")} aria-label="Trending TV Shows Section">
+  <section className={cn("w-[85vw] mt-2 mx-auto")} aria-label="Trending TV Shows Section">
         <h2 className={cn("text-2xl font-bold mb-4 text-center")}>Trending TV Shows</h2>
         <div className="relative w-full bg-transparent" aria-label="Trending TV Shows Grid">
           <div className="relative w-full" style={{ height: `${virtualizer.getTotalSize()}px` }}>

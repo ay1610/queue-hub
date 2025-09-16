@@ -141,7 +141,7 @@ export function MediaCardShadcn({
             </motion.div>
           </CardItem>
           <CardItem className="w-full">
-            <div className="w-full flex flex-row items-center justify-between px-2 pb-1 gap-2 py-0.5 mt-2">
+            <div className="w-full flex flex-row items-center justify-between px-2 pb-1 gap-2 py-0.5 mt-0">
               <MediaRatingBadge
                 voteAverage={rating?.averageRating ?? imdbRating ?? media.vote_average}
                 votes={rating?.numVotes ?? imdbVotes ?? 0}
@@ -156,11 +156,11 @@ export function MediaCardShadcn({
               )}
             </div>
           </CardItem>
-          <CardItem className="w-full text-center p-0 m-0 -mt-4">
-            <div className={cn("line-clamp-2 m-0 p-0 mb-2 mt-4", titleSize)}>{mediaTitle}</div>
-            <div className={cn("m-0 p-0 mt-1", genreSize)}>{mediaGenre}</div>
+          <CardItem className="w-full text-center p-0 m-0 mt-0">
+            <div className={cn("line-clamp-2 m-0 p-0 mb-2 mt-0", titleSize)}>{mediaTitle}</div>
+            <div className={cn("m-0 p-0 mt-0", genreSize)}>{mediaGenre}</div>
             <div
-              className={cn("flex flex-col items-center mt-1 gap-0.5")}
+              className={cn("flex flex-col items-center mt-0 gap-0.5")}
               aria-label="Runtime info"
             >
               <RuntimeBadge formattedRuntime={formattedRuntime} glass className="text-gray-500" />

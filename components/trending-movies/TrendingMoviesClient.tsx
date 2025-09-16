@@ -99,8 +99,8 @@ export function TrendingMoviesClient(): JSX.Element {
   return (
     <>
       {heroMovie && <MovieHero movie={heroMovie} />}
-      <section className={cn("w-[85vw] mt-8 mx-auto")} aria-label="Trending Movies Section">
-        <h2 className={cn("text-2xl font-bold mb-4 text-center")}>Trending Movies</h2>
+      <section className={cn("w-[85vw]  mx-auto")} aria-label="Trending Movies Section">
+        <h2 className={cn("text-2xl font-bold text-center")}>Trending Movies</h2>
         <div className="relative w-full bg-transparent" aria-label="Trending Movies Grid">
           <div className="relative w-full" style={{ height: `${virtualizer.getTotalSize()}px` }}>
             {virtualRows.map((virtualRow) => {

@@ -22,7 +22,7 @@ export function MediaHero({ title, overview, backdropPath, detailsLink }: MediaH
 
   return (
     <section
-      className="relative w-[85vw] min-h-[60vh] h-[60vw] max-h-[700px] flex items-end overflow-hidden bg-black px-8 md:px-16 lg:px-24 py-8 md:py-16 lg:py-24 mx-auto"
+      className="relative w-[85vw] min-h-[48vh] h-[48vw] max-h-[567px] flex items-end overflow-hidden bg-black px-8 md:px-16 lg:px-24 py-8 md:py-16 lg:py-24 mx-auto"
       aria-label={`Hero section for ${title}`}
     >
       {backdropUrl && (

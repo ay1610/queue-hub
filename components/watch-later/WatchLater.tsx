@@ -51,7 +51,7 @@ export default function WatchLater() {
           details={recommendationsDetails}
         />
       </CardContent>
-      <CardHeader>
+      <CardHeader className="mt-8">
         <h1 className="font-semibold text-2xl" data-slot="card-title">
           Watch List
         </h1>

@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import { Lock, Copy } from "lucide-react";
 
 function Page() {
-  const showDemo = process.env.NODE_ENV !== "production";
+  const isProd = process.env.NODE_ENV === "production";
   // 1. Define your form.
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
@@ -119,7 +119,7 @@ function Page() {
     <>
 
       <Card className={cn("w-full max-w-md mx-auto")}>
-        {showDemo && (
+        {isProd && (
           <div className="px-4 pt-4">
             <Banner className="text-sm rounded-lg p-3 bg-white/95 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 shadow-sm">
               <div className="flex flex-col gap-3">

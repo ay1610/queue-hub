@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import type { JSX } from "react";
 import { cn, getRandomItems } from "@/lib/utils";
@@ -16,11 +16,22 @@ import { TVShowSkeleton } from "./TVShowSkeleton";
 import type { TMDBTVShow } from "@/lib/types/tmdb";
 import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
 
+const getCardsPerRow = () => {
+  if (typeof window === "undefined") return 4; // Default for SSR
+  if (window.innerWidth >= 1280) return 5;
+  if (window.innerWidth >= 1024) return 4;
+  if (window.innerWidth >= 640) return 3;
+  return 2;
+};
+
 /**
  * Client-side component that fetches trending TV shows and watch later list using React Query,
  * then displays a hero section for a random show followed by a grid of trending TV show cards.
  */
 export function TrendingTVShowsClient(): JSX.Element {
+  const [heroShow, setHeroShow] = useState<TMDBTVShow | null>(null);
+  const [cardsPerRow, setCardsPerRow] = useState(getCardsPerRow());
+
   // Infinite query for trending TV shows
   const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteTrendingTVShows();
@@ -39,8 +50,6 @@ export function TrendingTVShowsClient(): JSX.Element {
   const { data: ratingBatch } = useBatchRatings(imdbIds);
   const showDataMap = useAggregatedMediaData(allShows, externalIdsBatch, runtimeBatch, ratingBatch);
 
-  // Pick a hero show from the first page
-  const [heroShow, setHeroShow] = useState<TMDBTVShow | null>(null);
   useEffect(() => {
     if (data?.pages?.[0]?.results?.length && !heroShow) {
       const firstPageShows = data.pages[0].results;
@@ -49,29 +58,42 @@ export function TrendingTVShowsClient(): JSX.Element {
     }
   }, [data, heroShow]);
 
-  // Virtualizer setup (declare only once)
-  // Grid virtualization: virtualize rows, each with up to 4 cards
-  const CARDS_PER_ROW = 4;
-  const ROW_HEIGHT = 700; // fallback estimate, but will use dynamic measurement
-  const rowCount = useMemo(() => Math.ceil(allShows.length / CARDS_PER_ROW), [allShows.length]);
-  const virtualizer = useWindowVirtualizer({
-    count: rowCount,
-    estimateSize: () => ROW_HEIGHT,
-    overscan: 6,
-    // measureElement is handled by ref below
-  });
-  const virtualRows = virtualizer.getVirtualItems();
-
-  // Infinite scroll: prefetch next page when 5 rows from the end
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
-    if (virtualRows.length) {
-      const lastRow = virtualRows[virtualRows.length - 1];
-      if (lastRow.index >= rowCount - 5) {
-        fetchNextPage();
-      }
+    const handleResize = () => {
+      setCardsPerRow(getCardsPerRow());
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Virtualizer setup for a grid layout
+  const virtualizer = useWindowVirtualizer({
+    count: allShows.length,
+    estimateSize: () => 450 + 48, // Estimate height of a card row + gap
+    overscan: 5,
+    gap: 48, // 3rem = 48px
+    lanes: cardsPerRow,
+  });
+
+  const virtualItems = virtualizer.getVirtualItems();
+
+  // Infinite scroll: prefetch next page when the last item is visible
+  useEffect(() => {
+    if (!virtualItems.length || !hasNextPage || isFetchingNextPage) {
+      return;
     }
-  }, [virtualRows, hasNextPage, isFetchingNextPage, fetchNextPage, rowCount]);
+    const lastItem = virtualItems[virtualItems.length - 1];
+    if (lastItem.index >= allShows.length - 1 - cardsPerRow * 2) {
+      fetchNextPage();
+    }
+  }, [
+    hasNextPage,
+    fetchNextPage,
+    allShows.length,
+    isFetchingNextPage,
+    virtualItems,
+    cardsPerRow,
+  ]);
 
   if (isLoading) {
     return <TVShowSkeleton />;
@@ -98,49 +120,47 @@ export function TrendingTVShowsClient(): JSX.Element {
       {heroShow && <TVShowHero show={heroShow} />}
       <section className={cn("w-[85vw] mt-2 mx-auto")} aria-label="Trending TV Shows Section">
         <h2 className={cn("text-2xl font-bold mb-4 text-center")}>Trending TV Shows</h2>
-        <div className="relative w-full bg-transparent" aria-label="Trending TV Shows Grid">
-          <div className="relative w-full" style={{ height: `${virtualizer.getTotalSize()}px` }}>
-            {virtualRows.map((virtualRow) => {
-              const rowStart = virtualRow.index * CARDS_PER_ROW;
-              const rowEnd = Math.min(rowStart + CARDS_PER_ROW, allShows.length);
-              return (
-                <div
-                  key={virtualRow.index}
-                  ref={(el) => virtualizer.measureElement(el)}
-                  className="absolute top-0 left-0 w-full flex justify-center"
-                  style={{
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                >
-                  <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 w-full p-2")}>
-                    {/* Responsive grid */}
-                    {allShows.slice(rowStart, rowEnd).map((show) => {
-                      const isInWatchLater = watchLaterLookup[`${show.id}-tv`] || false;
-                      const aggregated = showDataMap.get(show.id);
-                      return (
-                        <MediaCardShadcn
-                          key={show.id}
-                          media={show}
-                          type="tv"
-                          isInWatchLater={isInWatchLater}
-                          runtime={aggregated?.runtime}
-                          rating={aggregated?.rating}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          {isFetchingNextPage && (
-            <div className="w-full flex flex-col items-center absolute bottom-0 left-0">
-              <TVShowSkeleton showHero={false} />
-              <span className="text-gray-500 mt-2">Loading more...</span>
-            </div>
-          )}
+        <div
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          {virtualItems.map((virtualItem) => {
+            const show = allShows[virtualItem.index];
+            const isInWatchLater = watchLaterLookup[`${show.id}-tv`] || false;
+            const aggregated = showDataMap.get(show.id);
+
+            return (
+              <div
+                key={virtualItem.key}
+                ref={virtualizer.measureElement}
+                data-index={virtualItem.index}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: `${(virtualItem.lane * 100) / cardsPerRow}%`,
+                  width: `${100 / cardsPerRow}%`,
+                  height: `${virtualItem.size}px`,
+                  transform: `translateY(${virtualItem.start}px)`,
+                  padding: "0.5rem",
+                }}
+              >
+                <MediaCardShadcn
+                  media={show}
+                  type="tv"
+                  isInWatchLater={isInWatchLater}
+                  runtime={aggregated?.runtime}
+                  rating={aggregated?.rating}
+                />
+              </div>
+            );
+          })}
         </div>
+        {isFetchingNextPage && (
+          <div className="text-center col-span-full py-4">Loading more...</div>
+        )}
       </section>
     </>
   );

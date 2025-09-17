@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import type { JSX } from "react";
 

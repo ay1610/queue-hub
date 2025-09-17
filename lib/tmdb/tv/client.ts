@@ -49,7 +49,7 @@ export async function getTrendingTVShows(page: number = 1): Promise<PopularTVSho
   return withTVErrorHandling(
     "fetch trending TV shows",
     { page, endpoint: "/trending/tv/week" },
-    () => tmdbFetcher<PopularTVShowsResponse>(`/trending/tv/week?page=${page}`)
+    () => tmdbFetcher<PopularTVShowsResponse>(`/trending/tv/week?page=${page}&include_adult=false`)
   );
 }
 

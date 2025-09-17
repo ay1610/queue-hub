@@ -25,7 +25,9 @@ import type { TrendingMoviesResponse, TMDBMovie, TMDBGenre } from "@/lib/types/t
  * @returns A promise resolving to the trending movies response.
  */
 export async function getTrendingMovies(page: number = 1): Promise<TrendingMoviesResponse> {
-  return tmdbFetcher<TrendingMoviesResponse>(`/movie/popular?page=${page}`);
+  return tmdbFetcher<TrendingMoviesResponse>(
+    `/trending/movie/week?page=${page}&include_adult=false`
+  );
 }
 
 /**

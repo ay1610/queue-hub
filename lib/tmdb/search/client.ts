@@ -11,13 +11,13 @@ import type { DetailedMediaSearchResult, SearchMoviesResponse } from "@/lib/type
  */
 export async function searchMovies(query: string, page: number = 1): Promise<SearchMoviesResponse> {
   return tmdbFetcher<SearchMoviesResponse>(
-    `/search/movie?query=${encodeURIComponent(query)}&page=${page}`
+    `/search/movie?query=${encodeURIComponent(query)}&page=${page}&include_adult=false`
   );
 }
 
 export async function searchMedia(query: string, page = 1): Promise<DetailedMediaSearchResult> {
   return tmdbFetcher<DetailedMediaSearchResult>(
-    `/search/multi?query=${encodeURIComponent(query)}&page=${page}`
+    `/search/multi?query=${encodeURIComponent(query)}&page=${page}&include_adult=false`
   );
 }
 

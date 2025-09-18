@@ -8,6 +8,7 @@ import { GridBg } from "@/components/GridBg";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import HolyLoader from "holy-loader";
 
 export const metadata: Metadata = {
   title: "Queue Hub",
@@ -22,6 +23,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="relative min-h-screen">
+        <HolyLoader color="linear-gradient(to right, #38bdf8, #0ea5e9)" height="4px" speed={250} showSpinner />
         <Providers>
           <ReactQueryDevtools initialIsOpen={false} />
           <Navbar />

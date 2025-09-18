@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { BookMarked, Menu, Settings as CogIcon, Film, Tv, Bookmark, User } from "lucide-react";
+import { BookMarked, Menu, Film, Tv, Bookmark, User } from "lucide-react";
 import Link from "next/link";
 import { authClient } from "../lib/auth-client";
 import { redirect } from "next/navigation";

@@ -2,11 +2,10 @@
 
 import { MediaDetailPage } from "@/components/MediaDetailPage";
 import { useMediaDetails } from "@/lib/media-details-hooks";
-import { getFilteredGenres, getFormattedRuntime, getUSProviders } from "@/lib/media-utils";
+import { getFilteredGenres, getFormattedRuntime } from "@/lib/media-utils";
 import { use } from "react";
 import { useTVExternalIds, useTVGenres } from "@/lib/tmdb/tv/hooks";
 import { useTVShowVideos } from "@/lib/tmdb/tv/hooks";
-import { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
 import { useRuntimeData } from "@/lib/hooks/useRuntimeData";
 import { useIMDBRating } from "@/lib/hooks/useIMDBRating";
 
@@ -88,14 +87,6 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
   }
 
   const title: string = details.type === "tv" ? details.name : details.title;
-  const watchProvidersRaw = details["watch/providers"];
-  const watchProviders: WatchProvidersResponse | undefined = watchProvidersRaw
-    ? { id: tvId, ...watchProvidersRaw }
-    : undefined;
-  const usProvidersRaw = getUSProviders(watchProviders);
-  const usProviders = usProvidersRaw
-    ? { ...usProvidersRaw, link: usProvidersRaw.link ?? "" }
-    : { link: "" };
 
   const trailer = Array.isArray(tvVideosResp?.results)
     ? tvVideosResp.results.find((v) => v.type === "Trailer" && v.site === "YouTube")
@@ -113,7 +104,6 @@ export default function TVDetailPage({ params }: { params: Promise<{ id: string 
       posterPath={details.poster_path || ""}
       genres={filteredGenres}
       trailer={trailer}
-      usProviders={usProviders}
       runtimeMins={formattedRuntime}
       imdbRating={imdbRatingNumber}
       imdbVotes={imdbVotes}

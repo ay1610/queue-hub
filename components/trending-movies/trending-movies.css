@@ -1,0 +1,11 @@
+.virtual-grid-container {
+  width: 100%;
+  position: relative;
+  min-height: 600px;
+}
+
+.virtual-grid-item {
+  position: absolute;
+  top: 0;
+  padding: 0.5rem;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import type { JSX } from "react";
 
@@ -13,6 +13,7 @@ import type { TMDBMovie } from "@/lib/types/tmdb";
 import { cn, getRandomItems } from "@/lib/utils";
 import { useWatchLaterLookup } from "@/lib/watch-later-hooks";
 
+import "./trending-movies.css";
 import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
 import { TVShowSkeleton } from "../trending-tvshows/TVShowSkeleton";
 import { MovieHero } from "./MovieHero";
@@ -73,6 +74,13 @@ export function TrendingMoviesClient(): JSX.Element {
   }, []);
 
   // Virtualizer setup for a grid layout
+  const hasHydrated = useRef(false);
+
+  // On first client render, mark that we're on the client
+  useEffect(() => {
+    hasHydrated.current = true;
+  }, []);
+
   const virtualizer = useWindowVirtualizer({
     count: allMovies.length,
     estimateSize: () => 450 + 48, // Estimate height of a card row + gap
@@ -134,10 +142,9 @@ export function TrendingMoviesClient(): JSX.Element {
           Trending Movies
         </h2>
         <div
+          className="virtual-grid-container"
           style={{
-            height: `${virtualizer.getTotalSize()}px`,
-            width: "100%",
-            position: "relative",
+            height: hasHydrated.current ? `${virtualizer.getTotalSize()}px` : "auto"
           }}
         >
           {virtualItems.map((virtualItem) => {
@@ -151,14 +158,12 @@ export function TrendingMoviesClient(): JSX.Element {
                 key={virtualItem.key}
                 ref={virtualizer.measureElement}
                 data-index={virtualItem.index}
+                className="virtual-grid-item"
                 style={{
-                  position: "absolute",
-                  top: 0,
                   left: `${(virtualItem.lane * 100) / cardsPerRow}%`,
                   width: `${100 / cardsPerRow}%`,
                   height: `${virtualItem.size}px`,
                   transform: `translateY(${virtualItem.start}px)`,
-                  padding: "0.5rem",
                 }}
               >
                 <MediaCardShadcn

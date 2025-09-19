@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write .",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prepare": "husky"
   },
   "dependencies": {
     "@dicebear/bottts-neutral": "^9.2.3",
@@ -68,6 +69,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "eslint-config-prettier": "^10.1.5",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "prettier": "^3.5.3",
     "prisma": "^6.16.1",

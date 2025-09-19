@@ -1,5 +1,4 @@
 import { tmdbFetcher } from "./fetcher";
-import { TMDBError } from "@/lib/tmdb/types";
 import type { TMDBRegion, TMDBRegionsResponse } from "@/lib/tmdb/types/regions";
 
 /**

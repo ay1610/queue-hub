@@ -110,7 +110,7 @@ export default function Navbar() {
       <Drawer.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-40" />
-          <Drawer.Content className="fixed top-0 right-0 h-full w-96 bg-background shadow-lg z-50 p-6 rounded-none">
+          <Drawer.Content className="fixed top-0 right-0 h-full w-[60%] max-w-sm bg-background shadow-lg z-50 p-6 rounded-none">
             <div className="flex flex-col gap-6 h-full">
               <div className="flex flex-col gap-4">
                 <Link href="/trending/movies" className="flex items-center gap-2 font-medium" onClick={() => setDrawerOpen(false)}>

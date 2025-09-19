@@ -3,13 +3,8 @@
 import { MediaDetailPage } from "@/components/MediaDetailPage";
 import { useRuntimeData } from "@/lib/hooks/useRuntimeData";
 import { useMediaDetails } from "@/lib/media-details-hooks";
-import {
-  useMovieVideos,
-  useMovieWatchProviders,
-  useMovieExternalIds,
-} from "@/lib/tmdb/movie/hooks";
+import { useMovieVideos, useMovieExternalIds } from "@/lib/tmdb/movie/hooks";
 import type { TMDBVideo } from "@/lib/types/tmdb/videos";
-import type { WatchProvidersResponse } from "@/lib/tmdb/movie/watchProviders";
 import { use } from "react";
 import { getFormattedRuntime } from "@/lib/media-utils";
 
@@ -33,11 +28,7 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
     isLoading: videosLoading,
     error: videosError,
   } = useMovieVideos(movieId);
-  const {
-    data: watchProvidersResp,
-    isLoading: providersLoading,
-    error: providersError,
-  } = useMovieWatchProviders(movieId);
+
   const {
     data: externalIds,
     isLoading: externalIdsLoading,
@@ -57,22 +48,19 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
   if (
     movieLoading ||
     videosLoading ||
-    providersLoading ||
     externalIdsLoading ||
-    runtimeLoading ||
     runtimeLoading
   ) {
     return <div className="flex items-center justify-center h-64">Loading...</div>;
   }
 
   // Error state: combine all errors
-  if (movieError || videosError || providersError || externalIdsError || runtimeError) {
+  if (movieError || videosError || externalIdsError || runtimeError) {
     return (
       <div className="text-red-500 text-center py-8">
         Error:{" "}
         {movieError?.message ||
           videosError?.message ||
-          providersError?.message ||
           externalIdsError?.message ||
           "Unknown error"}
       </div>
@@ -89,11 +77,6 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
     ? videosResp.results.find((v) => v.site === "YouTube" && v.type === "Trailer")
     : undefined;
 
-  // Defensive: Type-check providers response before accessing
-  const usProviders: WatchProvidersResponse["results"]["US"] | undefined =
-    watchProvidersResp?.results?.US ?? undefined;
-
-
   // Render main detail page
   return (
     <MediaDetailPage
@@ -106,7 +89,6 @@ export default function MovieDetailPageWrapper({ params }: { params: Promise<{ i
       posterPath={movie.poster_path ?? ""}
       genres={Array.isArray(movie.genres) ? movie.genres : []}
       trailer={trailer}
-      usProviders={usProviders}
       runtimeMins={formattedRuntime}
     />
   );

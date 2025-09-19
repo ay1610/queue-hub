@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/co
 import { Banner } from "@/components/ui/banner";
 import Link from "next/link";
 import { z } from "zod";
+import { useRegionStore } from "@/lib/stores/region-store";
 
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,6 +58,14 @@ function Page() {
   }
 
   // 2. Define a submit handler.
+  const [signedIn, setSignedIn] = React.useState(false);
+
+  React.useEffect(() => {
+    if (signedIn) {
+      useRegionStore.getState().initializeFromCookie();
+    }
+  }, [signedIn]);
+
   async function onSubmit(values: z.infer<typeof signInFormSchema>) {
     const { email, password } = values;
     const { error } = await authClient.signIn.email(
@@ -77,6 +86,7 @@ function Page() {
         },
         onSuccess() {
           form.reset();
+          setSignedIn(true);
           toast.success("Signed in! Redirecting...", {
             duration: 2000,
           });
@@ -115,6 +125,9 @@ function Page() {
       });
     }
   }
+
+  // React effect to initialize region store after sign-in
+
   return (
     <>
 

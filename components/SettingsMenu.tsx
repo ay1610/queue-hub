@@ -62,7 +62,7 @@ export function SettingsMenu() {
     return (
         <div className="flex items-center">
             <Menubar>
-                <MenubarMenu value={isOpen ? "settings" : ""} onValueChange={(value) => setIsOpen(!!value)}>
+                <MenubarMenu value={isOpen ? "settings" : ""}>
                     <MenubarTrigger className="flex items-center justify-center gap-2 p-2 rounded-full hover:bg-muted focus:outline-none shadow">
                         <Settings className="h-5 w-5" />
                     </MenubarTrigger>

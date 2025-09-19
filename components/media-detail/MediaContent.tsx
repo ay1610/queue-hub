@@ -1,6 +1,5 @@
 import { MediaRatingBadge } from "../media-rating-badge";
 import { MediaTrailerDialog } from "../media-trailer-dialog";
-import { MediaWhereToWatch } from "../media-where-to-watch";
 import { RecommendFeature } from "../recommend/RecommendFeature";
 import type { TMDBVideo } from "@/lib/types/tmdb/videos";
 
@@ -68,12 +67,6 @@ export function MediaContent({
                         {overview}
                     </p>
                 )}
-
-                {/* Where to Watch Section */}
-                <div className="mt-8">
-                    <h2 className="text-lg font-semibold mb-2 text-gray-100">Where to Watch</h2>
-                    {mediaId && mediaType && <MediaWhereToWatch mediaId={mediaId} mediaType={mediaType} />}
-                </div>
             </div>
         </div>
     );

@@ -25,7 +25,7 @@ export interface MediaWhereToWatchProps {
  * @param mediaType - Whether this is a movie or TV show
  */
 const Container = ({ children }: { children: React.ReactNode }) => (
-  <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-16 mb-8 md:mb-12">{children}</div>
+  <div className="w-full">{children}</div>
 );
 
 export function MediaWhereToWatch({ mediaId, mediaType }: MediaWhereToWatchProps) {

@@ -8,8 +8,9 @@ interface VercelPreviewChecker {
 }
 
 // Vercel preview domains look like https://queue-hub-tau-<hash>.vercel.app
+// Allow any Vercel preview domain: https://<project>-<hash>.vercel.app or https://<project>.vercel.app
 const isVercelPreview: VercelPreviewChecker = (origin: string): boolean => {
-  return /^https:\/\/queue-hub-tau(-[a-z0-9]+)?\.vercel\.app$/.test(origin);
+  return /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin);
 };
 
 const corsOptions = {

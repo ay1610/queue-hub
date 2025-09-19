@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { geolocation } from "@vercel/functions";
 
-// Best practice: allow localhost, production domain, and any Vercel preview deployment
-const PROD_DOMAIN = "https://queue-hub-tau.vercel.app";
-interface VercelPreviewChecker {
-  (origin: string): boolean;
-}
-
-// Vercel preview domains look like https://queue-hub-tau-<hash>.vercel.app
-// Allow any Vercel preview domain: https://<project>-<hash>.vercel.app or https://<project>.vercel.app
-const isVercelPreview: VercelPreviewChecker = (origin: string): boolean => {
-  return /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin);
-};
+// Explicitly list allowed origins and allow any Vercel preview domain
+const allowedOrigins = ["http://localhost:3000", "https://queue-hub-tau.vercel.app"];
+const isVercelPreview = (origin: string): boolean =>
+  /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin);
 
 const corsOptions = {
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -21,8 +14,7 @@ const corsOptions = {
 
 export function middleware(request: NextRequest) {
   const origin = request.headers.get("origin") ?? "";
-  const isAllowedOrigin =
-    origin === "http://localhost:3000" || origin === PROD_DOMAIN || isVercelPreview(origin);
+  const isAllowedOrigin = allowedOrigins.includes(origin) || isVercelPreview(origin);
   const isPreflight = request.method === "OPTIONS";
 
   // Handle CORS preflight requests
@@ -44,9 +36,9 @@ export function middleware(request: NextRequest) {
     response.headers.set("Access-Control-Allow-Origin", origin);
     response.headers.set("Access-Control-Allow-Credentials", "true");
   }
-  Object.entries(corsOptions).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
+  response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  response.headers.set("Access-Control-Max-Age", "86400");
 
   // Detect and set user region after sign in
   if (request.nextUrl.pathname === "/api/auth/sign-in/email") {

@@ -10,7 +10,7 @@ import React from "react";
 export function MediaBackdrop({
   src,
   alt,
-  heightClass = "h-[60vh] md:h-[80vh]",
+  heightClass = "h-[70vh] md:h-[80vh]",
 }: {
   src: string;
   alt: string;

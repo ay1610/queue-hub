@@ -19,6 +19,11 @@
 
 @theme inline {
   --color-background: var(--background);
+  /* Z-index for select dropdown, must be above drawers/modals */
+  --z-select-dropdown: 200;
+  /* Z-index for drawer overlay and content */
+  --z-drawer-overlay: 100;
+  --z-drawer-content: 101;
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

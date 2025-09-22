@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { BookMarked, Menu, Film, Tv, Bookmark, User } from "lucide-react";
+import { BookMarked, Menu, Film, Tv, Bookmark, User, X } from "lucide-react";
 import Link from "next/link";
 import { authClient } from "../lib/auth-client";
 import { redirect } from "next/navigation";
@@ -98,36 +98,67 @@ export default function Navbar() {
           </div>
           {/* Hamburger for mobile */}
           <button
-            className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="md:hidden p-3 rounded-full bg-muted hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
             aria-label="Open menu"
+            aria-expanded={drawerOpen}
+            aria-controls="mobile-menu"
             onClick={() => setDrawerOpen(true)}
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-7 w-7" />
           </button>
         </div>
       </div>
       {/* Mobile Drawer */}
-      <Drawer.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
+      {/*
+        Z-INDEX LAYERING SYSTEM:
+        --z-drawer-overlay: 100; // Drawer overlay, sits below drawer content
+        --z-drawer-content: 101; // Drawer content, must be above overlay and below select dropdown
+        See globals.css for variable definitions. Adjust as needed for global consistency.
+      */}
+      <Drawer.Root open={drawerOpen} onOpenChange={setDrawerOpen} shouldScaleBackground={false}>
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-40" />
-          <Drawer.Content className="fixed top-0 right-0 h-full w-[60%] max-w-sm bg-background shadow-lg z-50 p-6 rounded-none">
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[var(--z-drawer-overlay,100)]" />
+          <Drawer.Content
+            className="fixed top-0 right-0 h-full w-[75%] max-w-xs bg-background shadow-lg z-[var(--z-drawer-content,101)] p-6"
+            aria-label="Mobile navigation menu"
+            role="dialog"
+            aria-modal="true"
+          >
             <div className="flex flex-col gap-6 h-full">
-              <div className="flex flex-col gap-4">
-                <Link href="/trending/movies" className="flex items-center gap-2 font-medium" onClick={() => setDrawerOpen(false)}>
-                  <Film className="h-5 w-5" />
-                  Trending Movies
-                </Link>
-                <Link href="/trending/tv-server" className="flex items-center gap-2 font-medium" onClick={() => setDrawerOpen(false)}>
-                  <Tv className="h-5 w-5" />
-                  Trending TV
-                </Link>
-                <Link href="/watch-list" className="flex items-center gap-2 font-medium" onClick={() => setDrawerOpen(false)}>
-                  <Bookmark className="h-5 w-5" />
-                  Watch List
-                </Link>
+              {/* Drawer header with close button */}
+              <div className="flex justify-between items-center border-b pb-3">
+                <h2 className="text-lg font-semibold">Menu</h2>
+                <button
+                  className="p-2 rounded-full hover:bg-muted"
+                  onClick={() => setDrawerOpen(false)}
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              <div className="flex items-center gap-2 mb-2">
-                <SettingsMenu />
+              {/* Scrollable content area */}
+              <div
+                className="flex-1 overflow-y-auto"
+                role="region"
+                aria-label="Scrollable navigation links"
+              >
+                <div className="flex flex-col gap-4 mb-4">
+                  <Link href="/trending/movies" className="flex items-center gap-2 font-medium" onClick={() => setDrawerOpen(false)}>
+                    <Film className="h-5 w-5" />
+                    Trending Movies
+                  </Link>
+                  <Link href="/trending/tv-server" className="flex items-center gap-2 font-medium" onClick={() => setDrawerOpen(false)}>
+                    <Tv className="h-5 w-5" />
+                    Trending TV
+                  </Link>
+                  <Link href="/watch-list" className="flex items-center gap-2 font-medium" onClick={() => setDrawerOpen(false)}>
+                    <Bookmark className="h-5 w-5" />
+                    Watch List
+                  </Link>
+                </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <SettingsMenu />
+                </div>
               </div>
 
               {session && session.user ? (

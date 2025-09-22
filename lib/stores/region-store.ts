@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { track } from "@vercel/analytics";
 import type { TMDBRegion } from "@/lib/tmdb/types/regions";
 
 interface RegionState {
@@ -13,7 +14,15 @@ export const useRegionStore = create<RegionState>()(
   persist(
     (set, get) => ({
       regionInfo: null,
-      setRegion: (regionInfo: TMDBRegion) => set({ regionInfo }),
+      setRegion: (regionInfo: TMDBRegion) => {
+        set({ regionInfo });
+        // Track region change event
+        track("Set Region", {
+          region: regionInfo.iso_3166_1,
+          english_name: regionInfo.english_name,
+          native_name: regionInfo.native_name,
+        });
+      },
       getRegionCode: () => get().regionInfo?.iso_3166_1 || "US", // Default to US if no region set
       initializeFromCookie: () => {
         try {

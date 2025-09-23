@@ -74,19 +74,21 @@ export function MediaCardShadcn({
       ? getMediaGenre(media, type, movieGenreData, tvGenreData)
       : "Unknown Genre";
   const cardSize =
-    size === "small" ? "p-1 w-full max-w-[160px] h-[325px]" : "p-2 w-full max-w-[340px] h-[525px]";
+    size === "small"
+      ? "p-1 w-full max-w-[160px] h-[325px]"
+      : "p-2 w-full max-w-[340px] h-[350px] sm:h-[525px]"; // Responsive: shorter on mobile, default on desktop
   const posterSize =
     size === "small"
       ? {
         width: 160,
         height: 240,
-        className: "rounded-lg mb-1 w-full h-auto aspect-[2/3]",
+        className: "rounded-lg mb-0.5 sm:mb-1 w-full h-auto aspect-[2/3]", // less margin on mobile
         tmdbSize: "w500",
       }
       : {
         width: 340,
         height: 510,
-        className: "rounded-lg mb-2 w-full h-auto aspect-[2/3]",
+        className: "rounded-lg mb-1 sm:mb-2 w-full h-auto aspect-[2/3]", // less margin on mobile
         tmdbSize: "w780",
       };
   const titleSize = size === "small" ? "text-xs" : "text-sm";
@@ -126,7 +128,7 @@ export function MediaCardShadcn({
                   src={`https://image.tmdb.org/t/p/${posterSize.tmdbSize}${media.poster_path}`}
                   alt={`Poster for ${mediaTitle}`}
                   fill
-                  className={cn("object-cover w-full h-full rounded-lg aspect-[2/3]")}
+                  className={cn("object-cover w-full h-full rounded-lg aspect-[2/3]", posterSize.className)}
                 />
               ) : (
                 <div
@@ -157,7 +159,7 @@ export function MediaCardShadcn({
             </div>
           </CardItem>
           <CardItem className="w-full text-center p-0 m-0 mt-0">
-            <div className={cn("line-clamp-2 m-0 p-0 mb-2 mt-0", titleSize)}>{mediaTitle}</div>
+            <div className={cn("line-clamp-2 m-0 p-0 mb-0.5 sm:mb-2 mt-0", titleSize)}>{mediaTitle}</div>
             <div className={cn("m-0 p-0 mt-0", genreSize)}>{mediaGenre}</div>
             <div
               className={cn("flex flex-col items-center mt-0 gap-0.5")}

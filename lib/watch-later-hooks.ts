@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from "@ta
 import { createWatchLaterLookup } from "./watch-later-client-helpers";
 import { WatchLaterResponse, WatchLaterMutationParams } from "./types/watch-later";
 import { WATCH_LATER_CACHE } from "./cache-config";
+import { useWatchLaterStore } from "@/lib/stores/watchLaterStore";
 
 // Query key factory for watch later functionality
 export const watchLaterKeys = {
@@ -49,6 +50,16 @@ export function useWatchLaterMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
+    onMutate: async ({ mediaId, mediaType, action }: WatchLaterMutationParams) => {
+      const { add, remove } = useWatchLaterStore.getState();
+      if (action === "add") {
+        add(mediaId, mediaType);
+      } else {
+        remove(mediaId, mediaType);
+      }
+      // return context if we wanted to rollback; for now we rely on refetch/hydrate
+      return { mediaId, mediaType, action };
+    },
     mutationFn: async ({ mediaId, mediaType, action }: WatchLaterMutationParams) => {
       const method = action === "add" ? "POST" : "DELETE";
       const response = await fetch("/api/watch-later", {
@@ -66,6 +77,15 @@ export function useWatchLaterMutation() {
     onSuccess: () => {
       // Invalidate and refetch watch later list using the new query key factory
       queryClient.invalidateQueries({ queryKey: watchLaterKeys.lists() });
+    },
+    onError: (_e, { mediaId, mediaType, action }) => {
+      // On error revert the optimistic change
+      const { add, remove } = useWatchLaterStore.getState();
+      if (action === "add") {
+        remove(mediaId, mediaType);
+      } else {
+        add(mediaId, mediaType);
+      }
     },
   });
 }

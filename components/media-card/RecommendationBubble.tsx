@@ -24,8 +24,8 @@ export const RecommendationBubble: React.FC<RecommendationBubbleProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-1 mb-2 w-full">
-      <span className="text-[11px] text-muted-foreground mb-0.5">Recommended by</span>
-      <div className="flex items-center gap-2 mb-1">
+      <span className="text-[11px] text-muted-foreground/90 mb-0.5">Recommended by</span>
+      <div className="flex items-center gap-1.5 mb-0.5">
         {fromUserImage ? (
           <Image
             src={fromUserImage}
@@ -42,15 +42,28 @@ export const RecommendationBubble: React.FC<RecommendationBubbleProps> = ({
             {getInitials(fromUsername)}
           </span>
         )}
-        <span className="text-xs font-medium text-foreground">{fromUsername}</span>
+        <span className="text-[12px] font-medium text-foreground">{fromUsername}</span>
       </div>
       {message && (
-        <span
-          className="relative block bg-muted px-3 py-2 rounded-xl text-sm text-foreground text-center max-w-[95%] break-words whitespace-pre-line shadow-sm border border-gray-200 dark:border-zinc-700 before:content-[''] before:absolute before:-bottom-2 before:left-1/2 before:-translate-x-1/2 before:w-3 before:h-3 before:bg-muted before:rotate-45 before:border-b before:border-r before:border-gray-200 before:dark:border-zinc-700 mt-0.5"
-          title={message}
-        >
-          &ldquo;{message}&rdquo;
-        </span>
+        <div className="relative flex flex-col items-center w-full mt-0.5">
+          <div
+            className="relative block px-2.5 py-1.5 rounded-2xl text-[13px] leading-snug text-white/95 dark:text-white/95 text-center max-w-[88%] break-words whitespace-pre-line shadow-[0_6px_20px_-8px_rgba(0,0,0,0.45)]
+                       bg-white/10 dark:bg-white/10 backdrop-blur-xl saturate-150 border border-white/10 ring-1 ring-white/20
+                       after:content-[''] after:absolute after:inset-0 after:rounded-2xl after:pointer-events-none after:bg-gradient-to-br after:from-white/20 after:via-white/8 after:to-transparent
+                       max-h-20 overflow-hidden [mask-image:linear-gradient(to_bottom,black_92%,transparent)]"
+            title={message}
+            role="note"
+            aria-label={`Recommendation message: ${message}`}
+          >
+            &ldquo;{message}&rdquo;
+          </div>
+          {/* Glass tail */}
+          <span
+            aria-hidden
+            className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 block w-3 h-3 rotate-45 rounded-[4px]
+                       bg-white/10 backdrop-blur-xl saturate-150 border border-white/10 ring-1 ring-white/20 shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+          />
+        </div>
       )}
     </div>
   );

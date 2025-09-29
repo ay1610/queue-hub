@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { BookMarked, Menu, Film, Tv, Bookmark, User, X } from "lucide-react";
 import Link from "next/link";
 import { authClient } from "../lib/auth-client";
-import { redirect } from "next/navigation";
+// Using window.location for client-side redirect to avoid test env router issues
 import { SettingsMenu } from "./SettingsMenu";
 import { ProfilePopover } from "./profile-drawer";
 import { SearchBar } from "@/components/search/SearchBar";
@@ -23,21 +23,30 @@ export default function Navbar() {
 
   const [session, setSession] = useState<{ session: unknown; user: User } | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // no router hook needed
 
   useEffect(() => {
     (async () => {
-      const s = await authClient.getSession();
-      if (s && typeof s === "object" && "data" in s && s.data) {
-        const { user, session: sessionData } = s.data;
-        setSession({
-          session: sessionData,
-          user: {
-            ...user,
-            createdAt: user.createdAt ? user.createdAt.toString() : undefined,
-            updatedAt: user.updatedAt ? user.updatedAt.toString() : undefined,
-          },
-        });
-      } else {
+      try {
+        const s = await authClient.getSession();
+        type SessionResponse = { data?: { user: Record<string, unknown>; session: unknown } } | null | undefined;
+        const res = s as SessionResponse;
+        if (res && typeof res === "object" && "data" in res && res.data) {
+          const { user: rawUser, session: sessionData } = res.data;
+          const user = rawUser as Partial<User> & { createdAt?: Date | string; updatedAt?: Date | string };
+          setSession({
+            session: sessionData,
+            user: {
+              ...user,
+              createdAt: user?.createdAt ? user.createdAt.toString() : undefined,
+              updatedAt: user?.updatedAt ? user.updatedAt.toString() : undefined,
+            },
+          });
+        } else {
+          setSession(null);
+        }
+      } catch {
+        // Swallow fetch errors to keep navbar resilient
         setSession(null);
       }
     })();
@@ -46,7 +55,9 @@ export default function Navbar() {
   const handleSignOut = async () => {
     await authClient.signOut();
     setSession(null); // Immediately clear session on sign out
-    redirect("/");
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   };
 
   // The navbar uses a solid background and high z-index to ensure the global GridBg does not show through.
@@ -100,8 +111,7 @@ export default function Navbar() {
           <button
             className="md:hidden p-3 rounded-full bg-muted hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
             aria-label="Open menu"
-            aria-expanded={drawerOpen}
-            aria-controls="mobile-menu"
+            aria-haspopup="dialog"
             onClick={() => setDrawerOpen(true)}
           >
             <Menu className="h-7 w-7" />
@@ -120,6 +130,7 @@ export default function Navbar() {
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[var(--z-drawer-overlay,100)]" />
           <Drawer.Content
             className="fixed top-0 right-0 h-full w-[75%] max-w-xs bg-background shadow-lg z-[var(--z-drawer-content,101)] p-6"
+            id="mobile-menu"
             aria-label="Mobile navigation menu"
             role="dialog"
             aria-modal="true"

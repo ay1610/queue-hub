@@ -41,7 +41,7 @@ export function MediaHero({ title, overview, backdropPath, detailsLink }: MediaH
           <Button variant="secondary" size="sm" className="mt-2 gap-2">
             <span>Details</span>
           </Button>
-        </Link>
+      </Link>
       </div>
     </section>
   );

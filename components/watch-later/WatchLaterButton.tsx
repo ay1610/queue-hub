@@ -2,11 +2,12 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Check } from "lucide-react";
+import { Plus, Check, Loader2 } from "lucide-react";
 import { useWatchLaterMutation } from "@/lib/watch-later-hooks";
 import { WatchLaterMediaType } from "@/lib/types/watch-later";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useIsInWatchLater } from "@/lib/watch-later-store-hooks";
 
 interface WatchLaterButtonProps {
   mediaId: number;
@@ -14,6 +15,13 @@ interface WatchLaterButtonProps {
   className?: string;
   isInWatchLater?: boolean;
   title?: string; // Optional title for the media item to display in toast
+  /**
+   * Force showing text label next to the icon. If undefined, we'll infer based on width classes
+   * (w-auto or w-full). This avoids accidental text rendering for tiny icon buttons like w-8/w-9.
+   */
+  showText?: boolean;
+  /** Optional override for the underlying button variant (default/outline/ghost/secondary) */
+  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
 }
 
 export function WatchLaterButton({
@@ -22,15 +30,30 @@ export function WatchLaterButton({
   className,
   isInWatchLater = false,
   title,
+  showText,
+  variant,
 }: WatchLaterButtonProps) {
-  const [isInWatchLaterState, setIsInWatchLaterState] = useState(isInWatchLater);
+  const [animateSuccess, setAnimateSuccess] = useState(false);
   const watchLaterMutation = useWatchLaterMutation();
+  // Derive state from centralized store; fall back to prop pre-hydration to reduce flicker
+  const selected = useIsInWatchLater(mediaId, mediaType);
+  const effectiveSelected = selected || isInWatchLater;
+
+  // Reset success animation after a while
+  React.useEffect(() => {
+    if (animateSuccess) {
+      const timer = setTimeout(() => {
+        setAnimateSuccess(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [animateSuccess]);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const action = isInWatchLaterState ? "remove" : "add";
+    const action = effectiveSelected ? "remove" : "add";
     const toastOptions = { position: "bottom-center" as const };
 
     // Create toast messages with title if available
@@ -49,7 +72,7 @@ export function WatchLaterButton({
 
     try {
       await watchLaterMutation.mutateAsync({ mediaId, mediaType, action });
-      setIsInWatchLaterState(!isInWatchLaterState);
+      setAnimateSuccess(true);
 
       // Show success toast
       toast.success(successMessage, {
@@ -66,15 +89,52 @@ export function WatchLaterButton({
     }
   };
 
+  // Determine if button should show active state
+  const isActive = effectiveSelected || animateSuccess;
+
+  // Determine whether text is shown
+  // Prefer explicit prop; otherwise only enable for wide buttons (w-auto or w-full)
+  const hasTextClass =
+    typeof showText === "boolean"
+      ? showText
+      : Boolean(className?.includes("w-auto") || className?.includes("w-full"));
+
   return (
     <Button
       onClick={handleClick}
       disabled={watchLaterMutation.isPending}
-      variant="outline"
-      size="icon"
-      className={cn("w-6 h-6 p-1", className)}
+      variant={variant ?? (isActive ? "default" : "outline")}
+      size={hasTextClass ? "sm" : "icon"}
+      className={cn(
+        "relative transition-all duration-200 group whitespace-nowrap",
+        // Only apply filled active style if caller didn't supply a custom variant
+        (!variant && isActive) && "bg-primary/90 text-primary-foreground hover:bg-primary",
+        watchLaterMutation.isPending && "pointer-events-none",
+        className
+      )}
     >
-      {isInWatchLaterState ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+      {watchLaterMutation.isPending ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <>
+          {isActive ? (
+            <Check className={cn(
+              "h-4 w-4 transition-all duration-300 ease-out group-hover:scale-110",
+              hasTextClass ? "mr-1" : ""
+            )} />
+          ) : (
+            <Plus className={cn(
+              "h-4 w-4 transition-all duration-300 ease-out group-hover:scale-110",
+              hasTextClass ? "mr-1" : ""
+            )} />
+          )}
+          {hasTextClass && (
+            <span className="text-xs font-medium whitespace-nowrap overflow-visible">
+              {isActive ? "In Watch List" : "Watch Later"}
+            </span>
+          )}
+        </>
+      )}
     </Button>
   );
 }

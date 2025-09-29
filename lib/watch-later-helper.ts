@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { WatchLaterItem } from "./types/watch-later";
+import { buildKey } from "@/lib/watch-later-utils";
 
 export async function getWatchLaterList(): Promise<WatchLaterItem[]> {
   try {
@@ -32,12 +33,12 @@ export function isInWatchLater(
   return watchLaterList.some((item) => item.mediaId === mediaId && item.mediaType === mediaType);
 }
 
-export function createWatchLaterLookup(watchLaterList: { mediaId: number; mediaType: string }[]) {
-  return watchLaterList.reduce(
-    (lookup, item) => {
-      lookup[`${item.mediaId}-${item.mediaType}`] = true;
-      return lookup;
-    },
-    {} as Record<string, boolean>
-  );
+export function createWatchLaterLookup(
+  watchLaterList: { mediaId: number; mediaType: string }[]
+): Set<string> {
+  const s = new Set<string>();
+  for (const item of watchLaterList) {
+    s.add(buildKey(item.mediaId, item.mediaType as "movie" | "tv"));
+  }
+  return s;
 }

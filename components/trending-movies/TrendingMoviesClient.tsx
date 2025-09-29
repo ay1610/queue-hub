@@ -5,17 +5,19 @@ import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import type { JSX } from "react";
 
 import { useAggregatedMediaData } from "@/components/media/useAggregatedMediaData";
+import { CARD_ROW_GAP_DESKTOP, CARD_ROW_GAP_MOBILE, estimateCardBlockSize } from "@/lib/ui/layout";
 import { useBatchExternalIds } from "@/components/media/useBatchExternalIds";
 import { useBatchRatings } from "@/components/media/useBatchRatings";
 import { useBatchRuntime } from "@/components/media/useBatchRuntime";
 import { useInfiniteTrendingMovies } from "@/lib/tmdb/movie/hooks";
 import type { TMDBMovie } from "@/lib/types/tmdb";
 import { cn, getRandomItems } from "@/lib/utils";
-import { useWatchLaterLookup } from "@/lib/watch-later-hooks";
+// Removed inline watch-later hook usage; handled inside WatchLaterAwareCard
 
-import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
+// import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
 import { TVShowSkeleton } from "../trending-tvshows/TVShowSkeleton";
 import { MovieHero } from "./MovieHero";
+import { InteractiveWatchLaterCard } from "../media-card/WatchLaterAwareCard";
 
 const getCardsPerRow = () => {
   if (typeof window === "undefined") return 4; // Default for SSR
@@ -36,7 +38,7 @@ export function TrendingMoviesClient(): JSX.Element {
   // Infinite query for trending movies
   const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteTrendingMovies();
-  const watchLaterLookup = useWatchLaterLookup();
+  // Use shared wrapper instead of inline definition
 
   // Combine all movies from all pages
   const allMovies: TMDBMovie[] = useMemo(
@@ -77,8 +79,10 @@ export function TrendingMoviesClient(): JSX.Element {
 
   // Responsive gap and estimate for desktop vs mobile
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 640;
-  const rowGap = isDesktop ? 24 : 2; // 24px for desktop, 2px for mobile
-  const estimate = (isDesktop ? 525 : 350) + rowGap; // Match card height for virtualization
+  // Increase vertical spacing between rows (previous gap too tight). Use larger gap on all breakpoints.
+  const rowGap = isDesktop ? CARD_ROW_GAP_DESKTOP : CARD_ROW_GAP_MOBILE;
+  // Estimate fixed card height + gap (values centralized in layout constants)
+  const estimate = estimateCardBlockSize(isDesktop);
 
   const virtualizer = useWindowVirtualizer({
     count: allMovies.length,
@@ -149,8 +153,6 @@ export function TrendingMoviesClient(): JSX.Element {
         >
           {virtualItems.map((virtualItem) => {
             const movie = allMovies[virtualItem.index];
-            const isInWatchLater =
-              watchLaterLookup[`${movie.id}-movie`] || false;
             const aggregated = movieDataMap.get(movie.id);
 
             return (
@@ -168,10 +170,9 @@ export function TrendingMoviesClient(): JSX.Element {
                   padding: isDesktop ? "0.5rem" : "0.25rem", // Smaller padding on mobile
                 }}
               >
-                <MediaCardShadcn
+                <InteractiveWatchLaterCard
                   media={movie}
                   type="movie"
-                  isInWatchLater={isInWatchLater}
                   runtime={aggregated?.runtime}
                   rating={aggregated?.rating}
                 />

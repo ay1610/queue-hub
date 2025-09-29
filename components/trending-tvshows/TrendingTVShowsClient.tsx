@@ -5,16 +5,18 @@ import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import type { JSX } from "react";
 import { cn, getRandomItems } from "@/lib/utils";
 import { useInfiniteTrendingTVShows } from "@/lib/tmdb/tv/hooks";
-import { useWatchLaterLookup } from "@/lib/watch-later-hooks";
+// Switch to Zustand-backed selector for minimal re-renders
+import { InteractiveWatchLaterCard } from "../media-card/WatchLaterAwareCard";
 import { useBatchExternalIds } from "@/components/media/useBatchExternalIds";
 import { useBatchRuntime } from "@/components/media/useBatchRuntime";
 import { useBatchRatings } from "@/components/media/useBatchRatings";
 import { useAggregatedMediaData } from "@/components/media/useAggregatedMediaData";
 
 import { TVShowHero } from "./TVShowHero";
+// Types are inferred through aggregated result; no direct references needed here
 import { TVShowSkeleton } from "./TVShowSkeleton";
 import type { TMDBTVShow } from "@/lib/types/tmdb";
-import { MediaCardShadcn } from "../media-card/MediaCardShadcn";
+import { CARD_ROW_GAP_DESKTOP, CARD_ROW_GAP_MOBILE, estimateCardBlockSize } from "@/lib/ui/layout";
 
 const getCardsPerRow = () => {
   if (typeof window === "undefined") return 4; // Default for SSR
@@ -35,7 +37,6 @@ export function TrendingTVShowsClient(): JSX.Element {
   // Infinite query for trending TV shows
   const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteTrendingTVShows();
-  const watchLaterLookup = useWatchLaterLookup();
 
   // Combine all shows from all pages (memoized)
   const allShows: TMDBTVShow[] = React.useMemo(
@@ -69,10 +70,10 @@ export function TrendingTVShowsClient(): JSX.Element {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Responsive gap for desktop vs mobile
+  // Responsive gap & uniform card height (shared with movies list)
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 640;
-  const rowGap = isDesktop ? 24 : 48; // 24px for desktop, 48px for mobile
-  const estimate = 450 + rowGap;
+  const rowGap = isDesktop ? CARD_ROW_GAP_DESKTOP : CARD_ROW_GAP_MOBILE;
+  const estimate = estimateCardBlockSize(isDesktop);
 
   const virtualizer = useWindowVirtualizer({
     count: allShows.length,
@@ -122,6 +123,8 @@ export function TrendingTVShowsClient(): JSX.Element {
     );
   }
 
+  // Use shared wrapper instead of inline definition
+
   return (
     <>
       {heroShow && <TVShowHero show={heroShow} />}
@@ -136,7 +139,6 @@ export function TrendingTVShowsClient(): JSX.Element {
         >
           {virtualItems.map((virtualItem) => {
             const show = allShows[virtualItem.index];
-            const isInWatchLater = watchLaterLookup[`${show.id}-tv`] || false;
             const aggregated = showDataMap.get(show.id);
 
             return (
@@ -154,10 +156,9 @@ export function TrendingTVShowsClient(): JSX.Element {
                   padding: "0.5rem",
                 }}
               >
-                <MediaCardShadcn
+                <InteractiveWatchLaterCard
                   media={show}
                   type="tv"
-                  isInWatchLater={isInWatchLater}
                   runtime={aggregated?.runtime}
                   rating={aggregated?.rating}
                 />

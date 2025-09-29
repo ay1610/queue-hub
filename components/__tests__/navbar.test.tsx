@@ -20,9 +20,14 @@ import Navbar from "../navbar";
 import { ThemeProvider } from "next-themes";
 import userEvent from "@testing-library/user-event";
 
-// Mock next/navigation for redirect
+// Mock next/navigation for redirect and router used by SearchBar
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
 }));
 
 vi.mock("@/lib/auth-client", () => {

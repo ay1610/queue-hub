@@ -67,7 +67,14 @@ export function RecommendFeature({
     <>
       <RecommendButton
         aria-label="Recommend to a Friend"
-        onClick={() => setOpen(true)}
+        // Prevent parent Link/navigation when clicking the recommend control
+        onClick={(e?: React.MouseEvent) => {
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          setOpen(true);
+        }}
         isLoading={shareRecommendation.isPending}
         hasRecommended={hasRecommended || animateSuccess}
         showText={showText}

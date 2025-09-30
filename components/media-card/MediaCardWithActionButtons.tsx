@@ -152,6 +152,9 @@ export function InteractiveMediaCard({
                               "absolute left-1 top-1",
                               size === "small" ? "" : "hidden"
                             )}
+                            onClick={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onTouchStart={(e) => e.stopPropagation()}
                             aria-label={`${(rating?.averageRating ?? imdbRating ?? media.vote_average ?? 0).toFixed(1)} rating`}
                           >
                             <CircularRating
@@ -178,7 +181,12 @@ export function InteractiveMediaCard({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="absolute right-1 top-1 sm:right-2 sm:top-2 pointer-events-auto">
+                          <div
+                            className="absolute right-1 top-1 sm:right-2 sm:top-2 pointer-events-auto z-10"
+                            onClick={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onTouchStart={(e) => e.stopPropagation()}
+                          >
                             <WatchLaterButton
                               mediaId={media.id}
                               mediaType={type === "movie" ? "movie" : "tv"}
@@ -242,23 +250,30 @@ export function InteractiveMediaCard({
           </div>
 
           {/* Card Actions Section - compact icon-only row for small; preserve test id */}
-          <div className="w-full mt-2 px-1">
+          <div className="w-full mt-2 px-1 relative z-10">
             <div
               data-testid="card-actions-section"
               className={cn(
+                // Keep actions interactive even if parent layers have transforms
                 "w-full pointer-events-auto",
                 size === "small" ? "flex flex-row items-center justify-center gap-2" : "flex flex-col items-center gap-2 p-2 bg-gray-50/90 dark:bg-zinc-800/95 rounded-lg"
               )}
+              // Stop click/touch bubbling to the Link above
+              onClick={(e) => { e.stopPropagation(); }}
+              onMouseDown={(e) => { e.stopPropagation(); }}
+              onTouchStart={(e) => { e.stopPropagation(); }}
             >
               {(type === "movie" || type === "tv") && size !== "small" && (
-                <WatchLaterButton
-                  mediaId={media.id}
-                  mediaType={type === "movie" ? "movie" : "tv"}
-                  isInWatchLater={isInWatchLater}
-                  title={mediaTitle}
-                  showText
-                  className="w-full h-9"
-                />
+                <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} className="w-full">
+                  <WatchLaterButton
+                    mediaId={media.id}
+                    mediaType={type === "movie" ? "movie" : "tv"}
+                    isInWatchLater={isInWatchLater}
+                    title={mediaTitle}
+                    showText
+                    className="w-full h-9"
+                  />
+                </div>
               )}
 
               {(type === "movie" || type === "tv") && (
@@ -266,7 +281,7 @@ export function InteractiveMediaCard({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div>
+                        <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
                           <RecommendFeature
                             mediaId={media.id}
                             mediaType={type === "movie" ? "movie" : "tv"}
@@ -282,13 +297,15 @@ export function InteractiveMediaCard({
                     </Tooltip>
                   </TooltipProvider>
                 ) : (
-                  <RecommendFeature
-                    mediaId={media.id}
-                    mediaType={type === "movie" ? "movie" : "tv"}
-                    mediaTitle={mediaTitle}
-                    showText={true}
-                    className="w-full h-9"
-                  />
+                  <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} className="w-full">
+                    <RecommendFeature
+                      mediaId={media.id}
+                      mediaType={type === "movie" ? "movie" : "tv"}
+                      mediaTitle={mediaTitle}
+                      showText={true}
+                      className="w-full h-9"
+                    />
+                  </div>
                 )
               )}
             </div>

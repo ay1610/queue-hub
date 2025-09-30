@@ -1,24 +1,32 @@
 "use client";
 import { Carousel } from "@/components/ui/Carousel";
-import { CarouselMediaCard } from "@/components/ui/CarouselMediaCard";
-import Link from "next/link";
-import type { TMDBMovie } from "@/lib/types/tmdb";
+import { InteractiveWatchLaterCard } from "@/components/media-card/WatchLaterAwareCard";
+import type { EnrichedMovieData } from "@/lib/types/tmdb";
 
 interface TrendingMoviesCarouselProps {
-    movies: TMDBMovie[];
+    movies: EnrichedMovieData[];
 }
 
 export function TrendingMoviesCarousel({ movies }: TrendingMoviesCarouselProps) {
     return (
         <Carousel
+            className="min-h-[660px] sm:min-h-[700px]"
             items={movies}
             renderItem={(movie) => (
-                <Link key={movie.id} href={`/movie/${movie.id}`}>
-                    <CarouselMediaCard
-                        imageUrl={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "/fallback.jpg"}
-                        title={movie.title || "Untitled"}
-                    />
-                </Link>
+                <InteractiveWatchLaterCard
+                    key={movie.id}
+                    media={{
+                        id: movie.id,
+                        poster_path: movie.poster_path,
+                        title: movie.title,
+                        release_date: movie.release_date,
+                        vote_average: movie.vote_average,
+                        genre_ids: movie.genre_ids,
+                    }}
+                    type="movie"
+                    runtime={movie.imdbRuntime}
+                    rating={movie.imdbRating}
+                />
             )}
             slidesPerView={5}
             autoplay={true}

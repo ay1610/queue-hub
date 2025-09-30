@@ -2,6 +2,7 @@
 import { getProtectedUser } from "@/lib/auth-helpers";
 import { Metadata } from "next";
 import { Suspense } from "react";
+import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HomeBanner } from "@/components/home-banner";
 import TrendingMoviesSection from "./TrendingMoviesSection";
@@ -25,8 +26,16 @@ export default async function Page() {
       <HomeBanner userName={user?.name || "User"} />
 
       <Suspense fallback={
-        <section className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Trending Movies</h2>
+        <section className="mt-8" aria-label="Trending Movies (loading)">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-2xl font-bold">Trending Movies</h2>
+            <Link
+              href="/movies"
+              className="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+            >
+              See All
+            </Link>
+          </div>
           <div className="grid grid-flow-col gap-4 overflow-hidden">
             {Array(4).fill(0).map((_, i) => (
               <Skeleton
@@ -41,8 +50,16 @@ export default async function Page() {
       </Suspense>
 
       <Suspense fallback={
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-4">Trending TV Shows</h2>
+        <section className="mt-12" aria-label="Trending TV Shows (loading)">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-2xl font-bold">Trending TV Shows</h2>
+            <Link
+              href="/tv"
+              className="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+            >
+              See All
+            </Link>
+          </div>
           <div className="grid grid-flow-col gap-4 overflow-hidden">
             {Array(4).fill(0).map((_, i) => (
               <Skeleton

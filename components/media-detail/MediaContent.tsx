@@ -1,7 +1,7 @@
 import { MediaRatingBadge } from "../media-rating-badge";
 import { MediaTrailerDialog } from "../media-trailer-dialog";
-import { MediaWhereToWatch } from "../media-where-to-watch";
 import { RecommendFeature } from "../recommend/RecommendFeature";
+import { WatchLaterButton } from "../watch-later/WatchLaterButton";
 import type { TMDBVideo } from "@/lib/types/tmdb/videos";
 
 interface MediaContentProps {
@@ -15,6 +15,7 @@ interface MediaContentProps {
     mediaType?: "movie" | "tv";
     imdbRating?: number;
     imdbVotes?: number;
+    isInWatchLater?: boolean; // optional flag to indicate existing watch list state
 }
 
 export function MediaContent({
@@ -28,6 +29,7 @@ export function MediaContent({
     mediaType,
     imdbRating,
     imdbVotes,
+    isInWatchLater,
 }: MediaContentProps) {
     return (
         <div className="flex-grow">
@@ -56,10 +58,27 @@ export function MediaContent({
                     </div>
                 )}
 
-                {/* Action Buttons */}
-                <div className="flex items-center gap-2 mb-4">
+                {/* Action Buttons with full text for better UX */}
+                <div className="flex items-center gap-2 mb-4 flex-wrap" role="group" aria-label="Media actions">
                     <MediaTrailerDialog trailer={trailer} />
-                    <RecommendFeature mediaId={mediaId} mediaType={mediaType} mediaTitle={title} />
+                    {mediaId && mediaType && (
+                        <WatchLaterButton
+                            mediaId={mediaId}
+                            mediaType={mediaType}
+                            isInWatchLater={isInWatchLater}
+                            title={title}
+                            className="w-auto h-9 px-3" /* w-auto triggers text rendering in WatchLaterButton */
+                        />
+                    )}
+                    {mediaId && mediaType && (
+                        <RecommendFeature
+                            mediaId={mediaId}
+                            mediaType={mediaType}
+                            mediaTitle={title}
+                            showText={true}
+                            className="h-9 px-3"
+                        />
+                    )}
                 </div>
 
                 {/* Overview */}
@@ -68,12 +87,6 @@ export function MediaContent({
                         {overview}
                     </p>
                 )}
-
-                {/* Where to Watch Section */}
-                <div className="mt-8">
-                    <h2 className="text-lg font-semibold mb-2 text-gray-100">Where to Watch</h2>
-                    {mediaId && mediaType && <MediaWhereToWatch mediaId={mediaId} mediaType={mediaType} />}
-                </div>
             </div>
         </div>
     );

@@ -4,6 +4,7 @@ import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMediaSearch } from "@/lib/tmdb/search/hooks";
 import { useWatchLaterLookup } from "@/lib/watch-later-hooks";
+import { buildKey } from "@/lib/watch-later-utils";
 import { MediaCard } from "@/components/media-card/MediaCard";
 import { SearchResultSkeleton } from "@/components/search/SearchResultSkeleton";
 import { cn } from "@/lib/utils";
@@ -49,7 +50,7 @@ function SearchPage() {
       </div>
 
       {data?.results?.length ? (
-        <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 justify-center")}> 
+        <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4 justify-center")}>
           {data?.results.map((item) => {
             let mediaType: "movie" | "tv" | undefined;
             if (item.title) {
@@ -58,7 +59,7 @@ function SearchPage() {
               mediaType = "tv";
             }
             if (!mediaType) return null;
-            const isItemInWatchLater = watchLaterLookup[`${item.id}-${mediaType}`] || false;
+            const isItemInWatchLater = watchLaterLookup.has(buildKey(item.id, mediaType));
             const patchedItem = {
               ...item,
               vote_average: typeof item.vote_average === "number" ? item.vote_average : 0,

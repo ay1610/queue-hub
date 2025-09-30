@@ -1,8 +1,16 @@
 # Queue Hub
 
-[Live Website (Vercel)](https://queue-hub-tau.vercel.app)
+A modern, full-stack web app for discovering, tracking, and recommending movies and TV shows.
+Built with Next.js, React Query, and Prisma for scalability, performance, and robust user management.
 
-A modern, full-stack web application for discovering, tracking, and recommending movies and TV shows. Built for scalability, developer experience, and robust user management.
+- Track your personal watchlist for movies and TV shows
+- Discover trending content with infinite scroll (TMDB API)
+- Recommend media to other users with custom messages
+- Fast, client-side search and streaming info
+- Secure authentication, session management, and API protection
+- Modular, accessible UI components and theme support
+
+[Live Demo](https://queue-hub-tau.vercel.app)
 
 ---
 

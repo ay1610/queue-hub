@@ -43,7 +43,7 @@ export default function WatchLater() {
           Recommendations
         </h2>
       </CardHeader>
-      <CardContent>
+      <CardContent className="mb-10 pb-8 overflow-visible relative z-0">
         <RecommendationsList
           isLoading={isRecommendationsLoading}
           error={recommendationsError}
@@ -51,10 +51,10 @@ export default function WatchLater() {
           details={recommendationsDetails}
         />
       </CardContent>
-      <CardHeader className="mt-8">
-        <h1 className="font-semibold text-2xl" data-slot="card-title">
+      <CardHeader className="mt-8 relative z-50">
+        <h2 className="font-semibold text-2xl" data-slot="card-title">
           Watch List
-        </h1>
+        </h2>
       </CardHeader>
       <CardContent>
         <WatchLaterList

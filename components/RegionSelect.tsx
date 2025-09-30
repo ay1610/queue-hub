@@ -59,7 +59,7 @@ export function RegionSelect({
                     )}
                 </SelectValue>
             </SelectTrigger>
-            <SelectContent className="max-h-[300px] p-0">
+            <SelectContent className="max-h-[300px] p-0" position="popper">
                 <ScrollArea className="h-[300px] w-full">
                     <div className="p-1">
                         {regions.map((region: TMDBRegion) => (

@@ -13,7 +13,7 @@ export async function fetchBatchExternalIds(
       process.env.NEXTAUTH_URL ||
       hdrs.get("origin") ||
       `http://${hdrs.get("host") || "localhost:3000"}`;
-    const cookieHeader = cookies().toString();
+    const cookieHeader = (await cookies()).toString();
     const res = await fetch(`${baseUrl}/api/media/external-ids/batch`, {
       method: "POST",
       headers: {
@@ -48,7 +48,7 @@ export async function fetchBatchRuntime(
       process.env.NEXTAUTH_URL ||
       hdrs.get("origin") ||
       `http://${hdrs.get("host") || "localhost:3000"}`;
-    const cookieHeader = cookies().toString();
+    const cookieHeader = (await cookies()).toString();
     const res = await fetch(`${baseUrl}/api/run-time/batch`, {
       method: "POST",
       headers: {
@@ -83,7 +83,7 @@ export async function fetchBatchRatings(
       process.env.NEXTAUTH_URL ||
       hdrs.get("origin") ||
       `http://${hdrs.get("host") || "localhost:3000"}`;
-    const cookieHeader = cookies().toString();
+    const cookieHeader = (await cookies()).toString();
     const res = await fetch(`${baseUrl}/api/title-rating/batch`, {
       method: "POST",
       headers: {

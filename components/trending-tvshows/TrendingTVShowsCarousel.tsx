@@ -1,24 +1,32 @@
 "use client";
 import { Carousel } from "@/components/ui/Carousel";
-import { CarouselMediaCard } from "@/components/ui/CarouselMediaCard";
-import Link from "next/link";
-import type { TMDBTVShow } from "@/lib/types/tmdb";
+import { InteractiveWatchLaterCard } from "@/components/media-card/WatchLaterAwareCard";
+import type { EnrichedTVShowData } from "@/lib/types/tmdb";
 
 interface TrendingTVShowsCarouselProps {
-    tvShows: TMDBTVShow[];
+    tvShows: EnrichedTVShowData[];
 }
 
 export function TrendingTVShowsCarousel({ tvShows }: TrendingTVShowsCarouselProps) {
     return (
         <Carousel
+            className="min-h-[660px] sm:min-h-[700px]"
             items={tvShows}
-            renderItem={(tv) => (
-                <Link key={tv.id} href={`/tv/${tv.id}`}>
-                    <CarouselMediaCard
-                        imageUrl={tv.poster_path ? `https://image.tmdb.org/t/p/w500${tv.poster_path}` : "/fallback.jpg"}
-                        title={tv.name || "Untitled"}
-                    />
-                </Link>
+            renderItem={(tvShow) => (
+                <InteractiveWatchLaterCard
+                    key={tvShow.id}
+                    media={{
+                        id: tvShow.id,
+                        poster_path: tvShow.poster_path,
+                        name: tvShow.name,
+                        first_air_date: tvShow.first_air_date,
+                        vote_average: tvShow.vote_average,
+                        genre_ids: tvShow.genre_ids,
+                    }}
+                    type="tv"
+                    runtime={tvShow.imdbRuntime}
+                    rating={tvShow.imdbRating}
+                />
             )}
             slidesPerView={5}
             autoplay={true}

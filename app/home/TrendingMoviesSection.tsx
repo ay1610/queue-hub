@@ -20,7 +20,7 @@ export default async function TrendingMoviesSection() {
             <div className="flex items-center justify-between mb-2">
                 <h2 className="text-2xl font-bold">Trending Movies</h2>
                 <Link
-                    href="/movies"
+                    href="/trending/movies"
                     className="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                 >
                     See All

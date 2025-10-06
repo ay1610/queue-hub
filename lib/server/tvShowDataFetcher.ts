@@ -1,4 +1,4 @@
-import type { TMDBMovie } from "@/lib/types/tmdb";
+import type { TMDBTVShow } from "@/lib/types/tmdb";
 import { postBatch } from "./batchApi";
 
 export async function fetchBatchExternalIds(
@@ -32,8 +32,8 @@ export async function fetchBatchRatings(
   >("/api/title-rating/batch", { imdbIds });
 }
 
-export function aggregateMovieData(
-  movies: TMDBMovie[],
+export function aggregateTVShowData(
+  tvShows: TMDBTVShow[],
   externalIdsBatch: { imdb_id?: string | null }[] | null,
   runtimeBatch: { tconst: string; runtime_minutes: number | null }[] | null,
   ratingBatch: { tconst: string; averageRating: number | null; numVotes: number | null }[] | null
@@ -44,12 +44,12 @@ export function aggregateMovieData(
     imdbRating?: { tconst: string; averageRating: number | null; numVotes: number | null };
   }
 > {
-  const movieDataMap = new Map();
+  const tvShowDataMap = new Map();
 
   const runtimeMap = new Map((runtimeBatch || []).map((item) => [item.tconst, item]));
   const ratingMap = new Map((ratingBatch || []).map((item) => [item.tconst, item]));
 
-  movies.forEach((movie, index) => {
+  tvShows.forEach((tvShow, index) => {
     const externalId = externalIdsBatch?.[index];
     const imdbId = externalId?.imdb_id;
 
@@ -58,7 +58,7 @@ export function aggregateMovieData(
       const rating = ratingMap.get(imdbId);
 
       if (runtime || rating) {
-        movieDataMap.set(movie.id, {
+        tvShowDataMap.set(tvShow.id, {
           ...(runtime && { imdbRuntime: runtime }),
           ...(rating && { imdbRating: rating }),
         });
@@ -66,13 +66,13 @@ export function aggregateMovieData(
     }
   });
 
-  return movieDataMap;
+  return tvShowDataMap;
 }
 
-export async function fetchEnrichedMovieData(movies: TMDBMovie[]) {
-  if (!movies.length) return { movies, movieDataMap: new Map() };
-  const tmdbIds = movies.map((movie) => movie.id);
-  const externalIdsBatch = await fetchBatchExternalIds("movie", tmdbIds);
+export async function fetchEnrichedTVShowData(tvShows: TMDBTVShow[]) {
+  if (!tvShows.length) return { tvShows, tvShowDataMap: new Map() };
+  const tmdbIds = tvShows.map((tvShow) => tvShow.id);
+  const externalIdsBatch = await fetchBatchExternalIds("tv", tmdbIds);
   const imdbIds = (externalIdsBatch || [])
     .map((ext) => ext?.imdb_id)
     .filter((id): id is string => !!id);
@@ -80,6 +80,6 @@ export async function fetchEnrichedMovieData(movies: TMDBMovie[]) {
     fetchBatchRuntime(imdbIds),
     fetchBatchRatings(imdbIds),
   ]);
-  const movieDataMap = aggregateMovieData(movies, externalIdsBatch, runtimeBatch, ratingBatch);
-  return { movies, movieDataMap };
+  const tvShowDataMap = aggregateTVShowData(tvShows, externalIdsBatch, runtimeBatch, ratingBatch);
+  return { tvShows, tvShowDataMap };
 }

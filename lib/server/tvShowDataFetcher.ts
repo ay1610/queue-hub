@@ -1,110 +1,35 @@
 import type { TMDBTVShow } from "@/lib/types/tmdb";
-import { cookies, headers } from "next/headers";
+import { postBatch } from "./batchApi";
 
 export async function fetchBatchExternalIds(
   mediaType: "movie" | "tv",
   tmdbIds: number[]
 ): Promise<{ imdb_id?: string | null }[] | null> {
   if (!tmdbIds.length) return [];
-
-  try {
-    const hdrs = await headers();
-    const baseUrl =
-      process.env.NEXTAUTH_URL ||
-      hdrs.get("origin") ||
-      `http://${hdrs.get("host") || "localhost:3000"}`;
-    const cookieHeader = (await cookies()).toString();
-    const res = await fetch(`${baseUrl}/api/media/external-ids/batch`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(cookieHeader ? { cookie: cookieHeader } : {}),
-      },
-      body: JSON.stringify({ tmdbIds, mediaType }),
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      console.error("Batch external IDs fetch failed:", res.status, res.statusText);
-      return null;
-    }
-
-    const json = await res.json();
-    return json.data || [];
-  } catch (error) {
-    console.error("Error fetching batch external IDs:", error);
-    return null;
-  }
+  return await postBatch<{ tmdbIds: number[]; mediaType: string }, { imdb_id?: string | null }>(
+    "/api/media/external-ids/batch",
+    { tmdbIds, mediaType }
+  );
 }
 
 export async function fetchBatchRuntime(
   imdbIds: string[]
 ): Promise<{ tconst: string; runtime_minutes: number | null }[] | null> {
   if (!imdbIds.length) return [];
-
-  try {
-    const hdrs = await headers();
-    const baseUrl =
-      process.env.NEXTAUTH_URL ||
-      hdrs.get("origin") ||
-      `http://${hdrs.get("host") || "localhost:3000"}`;
-    const cookieHeader = (await cookies()).toString();
-    const res = await fetch(`${baseUrl}/api/run-time/batch`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(cookieHeader ? { cookie: cookieHeader } : {}),
-      },
-      body: JSON.stringify({ imdbIds }),
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      console.error("Batch runtime fetch failed:", res.status, res.statusText);
-      return null;
-    }
-
-    const json = await res.json();
-    return json.data || [];
-  } catch (error) {
-    console.error("Error fetching batch runtime:", error);
-    return null;
-  }
+  return await postBatch<{ imdbIds: string[] }, { tconst: string; runtime_minutes: number | null }>(
+    "/api/run-time/batch",
+    { imdbIds }
+  );
 }
 
 export async function fetchBatchRatings(
   imdbIds: string[]
 ): Promise<{ tconst: string; averageRating: number | null; numVotes: number | null }[] | null> {
   if (!imdbIds.length) return [];
-
-  try {
-    const hdrs = await headers();
-    const baseUrl =
-      process.env.NEXTAUTH_URL ||
-      hdrs.get("origin") ||
-      `http://${hdrs.get("host") || "localhost:3000"}`;
-    const cookieHeader = (await cookies()).toString();
-    const res = await fetch(`${baseUrl}/api/title-rating/batch`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(cookieHeader ? { cookie: cookieHeader } : {}),
-      },
-      body: JSON.stringify({ imdbIds }),
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      console.error("Batch ratings fetch failed:", res.status, res.statusText);
-      return null;
-    }
-
-    const json = await res.json();
-    return json.data || [];
-  } catch (error) {
-    console.error("Error fetching batch ratings:", error);
-    return null;
-  }
+  return await postBatch<
+    { imdbIds: string[] },
+    { tconst: string; averageRating: number | null; numVotes: number | null }
+  >("/api/title-rating/batch", { imdbIds });
 }
 
 export function aggregateTVShowData(

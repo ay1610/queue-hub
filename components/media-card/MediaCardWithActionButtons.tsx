@@ -77,7 +77,7 @@ export function InteractiveMediaCard({
   const cardSize =
     size === "small"
       ? `${smallBase} ${smallHeight}`
-      : "p-2 w-full max-w-[340px] h-[560px] sm:h-[600px]";
+      : "p-2 w-full max-w-[340px] h-[600px] sm:h-[640px]";
 
   const posterSize =
     size === "small"
